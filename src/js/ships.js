@@ -1,14 +1,15 @@
 export default class Ship {
-  constructor(shipLength) {
-    this.shipLength = shipLength;
+  constructor(shipData) {
+    this.shipLength = shipData.coordinates.length;
     this.status = {};
-    this.init();
+    this.init(shipData);
   }
 
-  init() {
-    for (let i = 1; i <= this.shipLength; i++) {
-      this.status[i] = false;
-    }
+  // populates this.status with coordinate as key, coordinate hit status as false by default
+  init(shipData) {
+    shipData.coordinates.forEach((position) => {
+      this.status[position] = false;
+    });
   }
 
   hit(position) {
