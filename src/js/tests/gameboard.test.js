@@ -167,3 +167,16 @@ test("ship status all sunk", () => {
 
   expect(gameboard.getShipStatus()).toEqual(expectedShipStatus);
 });
+
+test("are all ships sunk", () => {
+  let gameboard = new Gameboard();
+  let shipData1 = { name: "ship1", coordinates: ["x1y1"] };
+
+  gameboard.placeShip(shipData1);
+
+  expect(gameboard.areAllShipsSunk()).toEqual(false);
+
+  gameboard.receiveAttack("x1y1");
+
+  expect(gameboard.areAllShipsSunk()).toEqual(true);
+});

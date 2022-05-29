@@ -67,4 +67,10 @@ export default class Gameboard {
 
     return shipStatus;
   }
+
+  areAllShipsSunk() {
+    const shipStatus = this.getShipStatus();
+
+    return Object.values(shipStatus).every((value) => value);
+  }
 }
