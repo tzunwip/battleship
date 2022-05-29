@@ -1,12 +1,16 @@
 import Ship from "./ships";
 
 export default class Gameboard {
-  constructor() {
-    // keys are coordinates, values are {isAttacked: boolean, ship: this.shipsDatabase.name}
-    this.boardDatabase = {};
-    // keys are ship name, values are Ship class objects
-    this.shipsDatabase = {};
-    this.shipNamesList = [];
+  // keys are coordinates, values are {isAttacked: boolean, ship: this.shipsDatabase.name}
+  boardDatabase = {};
+  // keys are ship name, values are Ship class objects
+  shipsDatabase = {};
+  shipNamesList = [];
+
+  constructor(playerInput) {
+    this.playerName = playerInput.name;
+    this.color = playerInput.color;
+    this.isComputer = playerInput.isComputer;
   }
 
   // only works in empty gameboard
@@ -55,7 +59,7 @@ export default class Gameboard {
     }
     // grid attacked already, with ship or no ship
     if (grid.isAttacked == true) {
-      return "error";
+      return console.error("error receiveAttack(), grid has been attacked already");
     }
   }
 
@@ -72,5 +76,17 @@ export default class Gameboard {
     const shipStatus = this.getShipStatus();
 
     return Object.values(shipStatus).every((value) => value);
+  }
+
+  getPublicBoard() {
+    const boardDatabase = this.boardDatabase;
+    const publicBoard = Object.keys(boardDatabase).reduce((acc, key) => {
+      if ("isAttacked" in boardDatabase[key]) {
+        return { ...acc, [key]: { isAttacked: true, hasShip: "ship" in boardDatabase[key] } };
+      }
+      return acc;
+    }, {});
+
+    return publicBoard;
   }
 }
