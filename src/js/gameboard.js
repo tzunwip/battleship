@@ -6,6 +6,7 @@ export default class Gameboard {
     this.boardDatabase = {};
     // keys are ship name, values are Ship class objects
     this.shipsDatabase = {};
+    this.shipNamesList = [];
   }
 
   // only works in empty gameboard
@@ -27,6 +28,9 @@ export default class Gameboard {
 
     // adds newShip to shipsDatabase
     this.shipsDatabase[newShipInputs.name] = newShip;
+
+    // adds ship name to shipNamesList array
+    this.shipNamesList.push(newShipInputs.name);
 
     // adds newShip reference to
     newShipInputs.coordinates.forEach((position) => {
@@ -53,5 +57,14 @@ export default class Gameboard {
     if (grid.isAttacked == true) {
       return "error";
     }
+  }
+
+  getShipStatus() {
+    const shipStatus = this.shipNamesList.reduce((acc, shipName) => {
+      let ship = this.shipsDatabase[shipName];
+      return { ...acc, [shipName]: ship.isSunk() };
+    }, {});
+
+    return shipStatus;
   }
 }

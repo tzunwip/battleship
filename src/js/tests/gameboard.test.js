@@ -52,7 +52,7 @@ test("gameboard placeship invalid", () => {
   };
   const expectedShips = { ship1: expectedShip };
 
-  expect(gameboard.placeShip(shipData2)).toEqual("invalid");
+  expect(gameboard.placeShip(shipData2)).toEqual("invalid placement");
   expect(gameboard.shipsDatabase).toEqual(expectedShips);
   expect(gameboard.boardDatabase).toEqual(expectedBoard);
 });
@@ -141,4 +141,29 @@ test("gameboard duplicate recieve attack empty", () => {
   expect(gameboard.receiveAttack(attackCoordinate)).toEqual("error");
   expect(gameboard.boardDatabase).toEqual(expectedBoard);
   expect(gameboard.shipsDatabase).toEqual(expectedShips);
+});
+
+test("ship status new game", () => {
+  let gameboard = new Gameboard();
+  let shipData1 = { name: "ship1", coordinates: ["x1y1", "x2y1", "x3y1"] };
+
+  gameboard.placeShip(shipData1);
+
+  const expectedShipStatus = { ship1: false };
+
+  expect(gameboard.getShipStatus()).toEqual(expectedShipStatus);
+});
+
+test("ship status all sunk", () => {
+  let gameboard = new Gameboard();
+  let shipData1 = { name: "ship1", coordinates: ["x1y1", "x2y1", "x3y1"] };
+
+  gameboard.placeShip(shipData1);
+  gameboard.receiveAttack("x1y1");
+  gameboard.receiveAttack("x2y1");
+  gameboard.receiveAttack("x3y1");
+
+  const expectedShipStatus = { ship1: true };
+
+  expect(gameboard.getShipStatus()).toEqual(expectedShipStatus);
 });
