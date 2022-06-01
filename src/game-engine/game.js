@@ -31,6 +31,10 @@ export default class Game {
     }
   }
 
+  getMyself() {
+    return this.#players[this.#activePlayer];
+  }
+
   getOpponent() {
     if (this.#activePlayer) {
       return this.#players[0];
