@@ -13,22 +13,14 @@ export default class Game {
 
   placeShips(shipsInput) {
     const activeBoard = this.#players[this.#activePlayer];
-    const remainingShips = shipsInput.reduce((acc, cur) => {
-      const isPlacementValid = activeBoard.checkPlaceShipValid(cur);
-      if (isPlacementValid) {
-        activeBoard.placeShip(cur);
-        return acc;
-      } else {
-        return [...acc, cur];
-      }
-    }, []);
 
-    if (remainingShips) {
-      return remainingShips;
-    } else {
-      this.#advanceTurn();
-      return "continue";
-    }
+    shipsInput.forEach((newShipInput) => {
+      activeBoard.placeShip(newShipInput);
+    });
+
+    this.#advanceTurn();
+
+    return activeBoard;
   }
 
   #advanceTurn() {

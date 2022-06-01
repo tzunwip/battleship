@@ -42,17 +42,3 @@ test("game to completion", () => {
 
   expect(game.makeAttack({ coordinate: "x3y1" })).toEqual("player 1 has won");
 });
-
-test("test placeShips()", () => {
-  const shipsInput = [
-    { name: "ship1", coordinates: ["x1y1", "x2y1", "x3y1"] },
-    { name: "ship2", coordinates: ["x1y1", "x2y2", "x3y3"] },
-  ];
-
-  const game = new Game();
-
-  game.createPlayer(player1);
-  game.createPlayer(player2);
-
-  expect(game.placeShips(shipsInput)).toEqual();
-});
