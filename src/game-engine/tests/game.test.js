@@ -41,4 +41,22 @@ test("game to completion", () => {
   expect(game.makeAttack({ coordinate: "x2y1" })).toEqual("hit");
 
   expect(game.makeAttack({ coordinate: "x3y1" })).toEqual("player 1 has won");
+
+  game.resetGame();
+
+  game.createPlayer(player1);
+  game.createPlayer(player2);
+
+  game.placeShips(shipsInput1);
+  game.placeShips(shipsInput1);
+
+  game.startGame(0);
+
+  expect(game.makeAttack({ coordinate: "x1y1" })).toEqual("hit");
+  expect(game.makeAttack({ coordinate: "x1y2" })).toEqual("miss");
+
+  expect(game.makeAttack({ coordinate: "x2y1" })).toEqual("hit");
+  expect(game.makeAttack({ coordinate: "x2y1" })).toEqual("hit");
+
+  expect(game.makeAttack({ coordinate: "x3y1" })).toEqual("player 1 has won");
 });

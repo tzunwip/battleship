@@ -85,4 +85,10 @@ export default class Game {
       return attackResult;
     }
   }
+
+  resetGame() {
+    this.#players = [];
+    this.#activePlayer = 0;
+    this.#hasStarted = false;
+  }
 }
