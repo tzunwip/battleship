@@ -1,5 +1,5 @@
 import { clearElement } from "./utility";
-import { gameState } from "../state/state";
+import { GAME } from "../state/state";
 import { renderPlaceShips } from "./place-ships";
 
 export function renderNameInput(config) {
@@ -17,16 +17,19 @@ export function renderNameInput(config) {
   clearElement(header);
 
   const container = document.createElement("form");
+  container.className = "name-input";
   header.appendChild(container);
 
-  const title = document.createElement("h3");
+  const title = document.createElement("h4");
   title.textContent = titleText;
+  title.className = "name-input__title";
   container.appendChild(title);
 
   const inputOne = document.createElement("input");
   inputOne.placeholder = inputOneText;
   inputOne.required = "true";
   inputOne.type = "text";
+  inputOne.className = "name-input__text-input";
   container.appendChild(inputOne);
 
   if (config == "pvp") {
@@ -34,13 +37,14 @@ export function renderNameInput(config) {
     inputTwo.placeholder = inputTwoText;
     inputTwo.required = "true";
     inputTwo.type = "text";
+    inputTwo.className = "name-input__text-input";
     container.appendChild(inputTwo);
   }
 
   const button = document.createElement("button");
   button.textContent = buttonText;
-
   button.type = "button";
+  button.className = "name-input__button";
   button.addEventListener("click", (e) => {
     e.preventDefault();
     if (container.reportValidity()) {
@@ -51,13 +55,14 @@ export function renderNameInput(config) {
           name: ele.value,
           isComputer: false,
         };
-        gameState.createPlayer(newPlayerInput);
+        GAME.createPlayer(newPlayerInput);
       });
 
       if (inputNodes.length == 1) {
-        gameState.createPlayer(computer);
+        GAME.createPlayer(computer);
       }
 
+      clearElement(header);
       renderPlaceShips();
     }
   });
