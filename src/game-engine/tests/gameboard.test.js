@@ -9,14 +9,14 @@ const newPlayerInput = {
 
 test("check place ship valid", () => {
   const gameboard = new Gameboard(newPlayerInput);
-  const shipData1 = { name: "ship1", coordinates: ["x1y1", "x2y1", "x3y1"] };
+  const shipData1 = { id: "ship1", coordinates: ["x1y1", "x2y1", "x3y1"] };
 
   expect(gameboard.checkPlaceShipValid(shipData1)).toEqual(true);
 });
 
 test("check place ship invalid", () => {
   const gameboard = new Gameboard(newPlayerInput);
-  const shipData1 = { name: "ship1", coordinates: ["x1y1", "x2y1", "x3y1"] };
+  const shipData1 = { id: "ship1", coordinates: ["x1y1", "x2y1", "x3y1"] };
 
   expect(gameboard.checkPlaceShipValid(shipData1)).toEqual(true);
 
@@ -27,7 +27,7 @@ test("check place ship invalid", () => {
 
 test("gameboard placeship", () => {
   const gameboard = new Gameboard(newPlayerInput);
-  const shipData1 = { name: "ship1", coordinates: ["x1y1", "x2y1", "x3y1"] };
+  const shipData1 = { id: "ship1", coordinates: ["x1y1", "x2y1", "x3y1"] };
 
   gameboard.placeShip(shipData1);
 
@@ -45,8 +45,8 @@ test("gameboard placeship", () => {
 
 test("gameboard placeship invalid", () => {
   const gameboard = new Gameboard(newPlayerInput);
-  const shipData1 = { name: "ship1", coordinates: ["x1y1", "x2y1", "x3y1"] };
-  const shipData2 = { name: "ship2", coordinates: ["x1y1", "x1y2", "x1y3"] };
+  const shipData1 = { id: "ship1", coordinates: ["x1y1", "x2y1", "x3y1"] };
+  const shipData2 = { id: "ship2", coordinates: ["x1y1", "x1y2", "x1y3"] };
 
   gameboard.placeShip(shipData1);
 
@@ -65,7 +65,7 @@ test("gameboard placeship invalid", () => {
 
 test("gameboard recieve attack hit ship", () => {
   let gameboard = new Gameboard(newPlayerInput);
-  let shipData1 = { name: "ship1", coordinates: ["x1y1", "x2y1", "x3y1"] };
+  let shipData1 = { id: "ship1", coordinates: ["x1y1", "x2y1", "x3y1"] };
   const attackCoordinate = "x1y1";
 
   gameboard.placeShip(shipData1);
@@ -86,7 +86,7 @@ test("gameboard recieve attack hit ship", () => {
 
 test("gameboard recieve attack hit empty", () => {
   let gameboard = new Gameboard(newPlayerInput);
-  let shipData1 = { name: "ship1", coordinates: ["x1y1", "x2y1", "x3y1"] };
+  let shipData1 = { id: "ship1", coordinates: ["x1y1", "x2y1", "x3y1"] };
   let attackCoordinate = "x1y2";
 
   gameboard.placeShip(shipData1);
@@ -107,7 +107,7 @@ test("gameboard recieve attack hit empty", () => {
 
 test("gameboard duplicate recieve attack ship", () => {
   let gameboard = new Gameboard(newPlayerInput);
-  let shipData1 = { name: "ship1", coordinates: ["x1y1", "x2y1", "x3y1"] };
+  let shipData1 = { id: "ship1", coordinates: ["x1y1", "x2y1", "x3y1"] };
   const attackCoordinate = "x1y1";
 
   gameboard.placeShip(shipData1);
@@ -128,7 +128,7 @@ test("gameboard duplicate recieve attack ship", () => {
 
 test("gameboard duplicate recieve attack empty", () => {
   let gameboard = new Gameboard(newPlayerInput);
-  let shipData1 = { name: "ship1", coordinates: ["x1y1", "x2y1", "x3y1"] };
+  let shipData1 = { id: "ship1", coordinates: ["x1y1", "x2y1", "x3y1"] };
   let attackCoordinate = "x1y2";
 
   gameboard.placeShip(shipData1);
@@ -149,7 +149,7 @@ test("gameboard duplicate recieve attack empty", () => {
 
 test("ship status new game", () => {
   let gameboard = new Gameboard(newPlayerInput);
-  let shipData1 = { name: "ship1", coordinates: ["x1y1", "x2y1", "x3y1"] };
+  let shipData1 = { id: "ship1", coordinates: ["x1y1", "x2y1", "x3y1"] };
 
   gameboard.placeShip(shipData1);
 
@@ -160,7 +160,7 @@ test("ship status new game", () => {
 
 test("ship status all sunk", () => {
   let gameboard = new Gameboard(newPlayerInput);
-  let shipData1 = { name: "ship1", coordinates: ["x1y1", "x2y1", "x3y1"] };
+  let shipData1 = { id: "ship1", coordinates: ["x1y1", "x2y1", "x3y1"] };
 
   gameboard.placeShip(shipData1);
   gameboard.receiveAttack("x1y1");
@@ -174,7 +174,7 @@ test("ship status all sunk", () => {
 
 test("are all ships sunk", () => {
   let gameboard = new Gameboard(newPlayerInput);
-  let shipData1 = { name: "ship1", coordinates: ["x1y1"] };
+  let shipData1 = { id: "ship1", coordinates: ["x1y1"] };
 
   gameboard.placeShip(shipData1);
 

@@ -19,8 +19,8 @@ const computer = {
 };
 
 const shipsInput1 = [
-  { name: "ship1", coordinates: ["x1y1", "x2y1", "x3y1"] },
-  // { name: "ship2", coordinates: ["x1y3", "x2y3", "x3y3"] },
+  { id: "ship1", coordinates: ["x1y1", "x2y1", "x3y1"] },
+  // { id: "ship2", coordinates: ["x1y3", "x2y3", "x3y3"] },
 ];
 
 test("game to completion", () => {
@@ -31,6 +31,8 @@ test("game to completion", () => {
 
   game.placeShips(shipsInput1);
   game.placeShips(shipsInput1);
+
+  expect(game.isInputComplete(shipsInput1)).toEqual(true);
 
   game.startGame(0);
 

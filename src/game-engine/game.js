@@ -55,6 +55,16 @@ export default class Game {
     return this.#players[this.#activePlayer].boardDatabase;
   }
 
+  isInputComplete(requiredShips) {
+    const arePlayerBoardsPopulated = this.#players.every((player) => {
+      return requiredShips.every((ship) => {
+        return ship.id in player.shipsDatabase;
+      });
+    });
+
+    return arePlayerBoardsPopulated;
+  }
+
   startGame(firstMover) {
     if (!this.#hasStarted) {
       this.#hasStarted = 1;

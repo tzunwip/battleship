@@ -1,9 +1,9 @@
 import Ship from "./ships";
 
 export default class Gameboard {
-  // keys are coordinates, values are {isAttacked: boolean, ship: this.shipsDatabase.name}
+  // keys are coordinates, values are {isAttacked: boolean, ship: this.shipsDatabase.id}
   boardDatabase = {};
-  // keys are ship name, values are Ship class objects
+  // keys are ship id, values are Ship class objects
   shipsDatabase = {};
   shipNamesList = [];
 
@@ -21,7 +21,7 @@ export default class Gameboard {
     return areGridsEmpty;
   }
 
-  // shipData {name: '', coordinates: ['x1y1', ...]}
+  // shipData {id: '', coordinates: ['x1y1', ...]}
   placeShip(newShipInputs) {
     // catch placement on occupied grids
     if (this.checkPlaceShipValid(newShipInputs) == false) {
@@ -31,14 +31,14 @@ export default class Gameboard {
     let newShip = new Ship(newShipInputs);
 
     // adds newShip to shipsDatabase
-    this.shipsDatabase[newShipInputs.name] = newShip;
+    this.shipsDatabase[newShipInputs.id] = newShip;
 
-    // adds ship name to shipNamesList array
-    this.shipNamesList.push(newShipInputs.name);
+    // adds ship id to shipNamesList array
+    this.shipNamesList.push(newShipInputs.id);
 
     // adds newShip reference to
     newShipInputs.coordinates.forEach((position) => {
-      this.boardDatabase[position] = { ship: this.shipsDatabase[newShipInputs.name] };
+      this.boardDatabase[position] = { ship: this.shipsDatabase[newShipInputs.id] };
     });
   }
 
