@@ -31,11 +31,15 @@ export default class Game {
     }
   }
 
-  getMyself() {
-    return this.#players[this.#activePlayer];
+  getMyName() {
+    return this.#players[this.#activePlayer].playerName;
   }
 
-  getOpponent() {
+  getOpponentsName() {
+    return this.#getOpponent().playerName;
+  }
+
+  #getOpponent() {
     if (this.#activePlayer) {
       return this.#players[0];
     } else {
@@ -44,7 +48,7 @@ export default class Game {
   }
 
   getOpponentsBoard() {
-    return this.getOpponent().getPublicBoard();
+    return this.#getOpponent().getPublicBoard();
   }
 
   getMyBoard() {
@@ -66,7 +70,7 @@ export default class Game {
 
   makeAttack(attackInputs) {
     const coordinate = attackInputs.coordinate;
-    const opponentPlayer = this.getOpponent();
+    const opponentPlayer = this.#getOpponent();
     const attackResult = opponentPlayer.receiveAttack(coordinate);
     const hasOpponentLost = opponentPlayer.areAllShipsSunk();
 
