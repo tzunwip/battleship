@@ -3,12 +3,12 @@ import { clearElement } from "./utility";
 import { renderNameInput } from "./name-input";
 
 export default function renderStart() {
-  const header = document.querySelector("header");
+  const main = document.querySelector("main");
   const titleText = "Battleships";
   const descText = "Choose game mode:";
   const pvpText = "2 Players";
 
-  clearElement(header);
+  clearElement(main);
 
   const container = document.createElement("div");
   container.className = "start";
@@ -28,12 +28,12 @@ export default function renderStart() {
   pvpButton.type = "button";
   pvpButton.className = "start__button";
   pvpButton.addEventListener("click", () => {
-    clearElement(header);
+    clearElement(main);
     GAME.resetGame();
     renderNameInput("pvp");
   });
 
   container.appendChild(pvpButton);
 
-  header.appendChild(container);
+  main.appendChild(container);
 }

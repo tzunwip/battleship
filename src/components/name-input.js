@@ -3,7 +3,7 @@ import { GAME } from "../state/state";
 import { renderPlaceShips } from "./place-ships";
 
 export function renderNameInput(config) {
-  const header = document.querySelector("header");
+  const main = document.querySelector("main");
   const isPvp = config == "pvp" ? true : false;
   const titleText = `Enter your name${isPvp ? "s" : ""}:`;
   const inputOneText = isPvp ? "Player One" : "Player";
@@ -14,11 +14,11 @@ export function renderNameInput(config) {
     isComputer: true,
   };
 
-  clearElement(header);
+  clearElement(main);
 
   const container = document.createElement("form");
   container.className = "name-input";
-  header.appendChild(container);
+  main.appendChild(container);
 
   const title = document.createElement("h4");
   title.textContent = titleText;
@@ -62,7 +62,7 @@ export function renderNameInput(config) {
         GAME.createPlayer(computer);
       }
 
-      clearElement(header);
+      clearElement(main);
       renderPlaceShips();
     }
   });
