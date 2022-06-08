@@ -6,13 +6,14 @@ export function renderPlaceShips() {
   const main = getEmptyMainElement();
   const activePlayerName = GAME.getMyName();
   const titleText = `${activePlayerName}, place your ships`;
-  const descText = "Drag and drop";
+  const descTextOne = "Drag and drop";
+  const descTextTwo = "Double click to rotate";
 
   const container = document.createElement("div");
   container.className = "place-ships";
   main.appendChild(container);
 
-  const title = document.createElement("h4");
+  const title = document.createElement("h5");
   title.textContent = titleText;
   title.className = "place-ships__title";
   container.appendChild(title);
@@ -22,10 +23,17 @@ export function renderPlaceShips() {
   renderPlaceShipGrids(board);
   container.appendChild(board);
 
-  const desc = document.createElement("h5");
-  desc.textContent = descText;
+  const desc = document.createElement("div");
   desc.className = "place-ships__desc";
   container.appendChild(desc);
+
+  const descOne = document.createElement("h6");
+  descOne.textContent = descTextOne;
+  desc.appendChild(descOne);
+
+  const descTwo = document.createElement("h6");
+  descTwo.textContent = descTextTwo;
+  desc.appendChild(descTwo);
 
   const staging = document.createElement("div");
   staging.className = "place-ships__staging";
