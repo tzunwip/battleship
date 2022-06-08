@@ -87,6 +87,11 @@ export default class Gameboard {
       return acc;
     }, {});
 
-    return publicBoard;
+    return {
+      playerName: this.playerName,
+      color: this.color,
+      isComputer: this.isComputer,
+      publicBoard,
+    };
   }
 }
