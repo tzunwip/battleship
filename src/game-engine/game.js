@@ -69,12 +69,6 @@ export default class Game {
     if (!this.#hasStarted) {
       this.#hasStarted = 1;
       this.#activePlayer = firstMover;
-
-      const renderInput = {
-        me: this.getMyBoard(),
-        opponent: this.getOpponentsBoard(),
-      };
-      // render board w/ renderInput
     }
   }
 
