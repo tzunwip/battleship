@@ -1,9 +1,9 @@
-import { clearElement } from "./utility";
+import { getEmptyMainElement } from "./utility";
 import { GAME } from "../state/state";
 import { renderPlaceShips } from "./place-ships";
 
 export function renderNameInput(config) {
-  const main = document.querySelector("main");
+  const main = getEmptyMainElement();
   const isPvp = config == "pvp" ? true : false;
   const titleText = `Enter your name${isPvp ? "s" : ""}:`;
   const inputOneText = isPvp ? "Player One" : "Player";
@@ -13,8 +13,6 @@ export function renderNameInput(config) {
     name: "Computer",
     isComputer: true,
   };
-
-  clearElement(main);
 
   const container = document.createElement("form");
   container.className = "name-input";
@@ -62,7 +60,6 @@ export function renderNameInput(config) {
         GAME.createPlayer(computer);
       }
 
-      clearElement(main);
       renderPlaceShips();
     }
   });
