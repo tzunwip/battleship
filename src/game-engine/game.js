@@ -72,14 +72,20 @@ export default class Game {
     }
   }
 
-  makeAttack(attackInputs) {
-    const coordinate = attackInputs.coordinate;
+  makeAttack({ coordinate, playerId }) {
+    // checks input from active player only
+    if (playerId !== this.#activePlayer) {
+      console.error("invalid playerId");
+      return;
+    }
+
     const opponentPlayer = this.#getOpponent();
     const attackResult = opponentPlayer.receiveAttack(coordinate);
     const hasOpponentLost = opponentPlayer.areAllShipsSunk();
 
     // check if attack valid
     if (!attackResult) {
+      console.error("invalid attack");
       return;
     }
 
