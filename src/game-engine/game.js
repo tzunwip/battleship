@@ -77,8 +77,8 @@ export default class Game {
   }
 
   makeAttack({ coordinate, playerId }) {
-    // checks input from active player only
-    if (playerId !== this.#activePlayer) {
+    // checks input origintes from opponent board only
+    if (playerId == this.#activePlayer) {
       console.error("invalid playerId");
       return;
     }
@@ -94,7 +94,7 @@ export default class Game {
     }
 
     // check winning condition
-    if (hasOpponentLost) {
+    if (attackResult.result == "sunk" && hasOpponentLost) {
       return `${this.#players[this.#activePlayer].playerName} has won`;
     }
 

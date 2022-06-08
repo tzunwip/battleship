@@ -78,8 +78,9 @@ test("gameboard recieve attack hit ship", () => {
     x3y1: { ship: expectedShip },
   };
   const expectedShips = { ship1: expectedShip };
+  const expectedAttackResult = { result: "hit" };
 
-  expect(gameboard.receiveAttack("x1y1")).toEqual("hit");
+  expect(gameboard.receiveAttack("x1y1")).toEqual(expectedAttackResult);
   expect(gameboard.boardDatabase).toEqual(expectedBoard);
   expect(gameboard.shipsDatabase).toEqual(expectedShips);
 });
@@ -99,8 +100,9 @@ test("gameboard recieve attack hit empty", () => {
     x1y2: { isAttacked: true },
   };
   const expectedShips = { ship1: expectedShip };
+  const expectedAttackResult = { result: "miss" };
 
-  expect(gameboard.receiveAttack(attackCoordinate)).toEqual("miss");
+  expect(gameboard.receiveAttack(attackCoordinate)).toEqual(expectedAttackResult);
   expect(gameboard.boardDatabase).toEqual(expectedBoard);
   expect(gameboard.shipsDatabase).toEqual(expectedShips);
 });
@@ -120,8 +122,9 @@ test("gameboard duplicate recieve attack ship", () => {
     x3y1: { ship: expectedShip },
   };
   const expectedShips = { ship1: expectedShip };
+  const expectedAttackResult = { result: "hit" };
 
-  expect(gameboard.receiveAttack("x1y1")).toEqual("hit");
+  expect(gameboard.receiveAttack("x1y1")).toEqual(expectedAttackResult);
   expect(gameboard.boardDatabase).toEqual(expectedBoard);
   expect(gameboard.shipsDatabase).toEqual(expectedShips);
 });
@@ -141,8 +144,9 @@ test("gameboard duplicate recieve attack empty", () => {
     x1y2: { isAttacked: true },
   };
   const expectedShips = { ship1: expectedShip };
+  const expectedAttackResult = { result: "miss" };
 
-  expect(gameboard.receiveAttack(attackCoordinate)).toEqual("miss");
+  expect(gameboard.receiveAttack(attackCoordinate)).toEqual(expectedAttackResult);
   expect(gameboard.boardDatabase).toEqual(expectedBoard);
   expect(gameboard.shipsDatabase).toEqual(expectedShips);
 });

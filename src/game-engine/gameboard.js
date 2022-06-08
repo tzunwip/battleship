@@ -46,7 +46,7 @@ export default class Gameboard {
     // grid not attacked && no ship
     if (position in this.boardDatabase == false) {
       this.boardDatabase[position] = { isAttacked: true };
-      return "miss";
+      return { result: "miss" };
     }
 
     let grid = this.boardDatabase[position];
@@ -55,7 +55,11 @@ export default class Gameboard {
     if ("isAttacked" in grid == false && "ship" in grid == true) {
       grid.isAttacked = true;
       grid.ship.hit(position);
-      return "hit";
+      if (grid.ship.isSunk()) {
+        return { result: "sunk", ship: grid.ship };
+      } else {
+        return { result: "hit" };
+      }
     }
     // grid attacked already, with ship or no ship
     if (grid.isAttacked == true) {
