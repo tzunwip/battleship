@@ -47,12 +47,16 @@ export default class Game {
     }
   }
 
-  getOpponentsBoard() {
-    return this.#getOpponent().getPublicBoard();
+  getPublicBoards() {
+    return [this.#players[0].getPublicBoard(), this.#players[1].getPublicBoard()];
   }
 
   getMyBoard() {
     return this.#players[this.#activePlayer].boardDatabase;
+  }
+
+  getActivePlayerId() {
+    return this.#activePlayer;
   }
 
   isInputComplete(requiredShips) {
