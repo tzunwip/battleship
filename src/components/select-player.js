@@ -1,6 +1,6 @@
 import { GAME } from "../state/state";
 import { renderGameDisplay } from "./game-display";
-import { getEmptyMainElement } from "./utility";
+import { getEmptyMainElement, getRandomBinary } from "./utility";
 
 export function renderSelectPlayer() {
   const main = getEmptyMainElement();
@@ -48,7 +48,7 @@ export function renderSelectPlayer() {
   });
 
   randomButton.addEventListener("click", () => {
-    const randomNumber = Math.round(Math.random());
+    const randomNumber = getRandomBinary();
     GAME.startGame(randomNumber);
     renderGameDisplay();
   });
