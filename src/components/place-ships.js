@@ -322,7 +322,6 @@ function getPlacedShips(SHIPS_CONFIG) {
 function renderRandomizedBoard(randomizedShips) {
   resetPlaceBoard();
 
-  console.log(randomizedShips);
   randomizedShips.forEach((ship) => {
     const headCoordinate = ship.coordinates[0];
     const headX = headCoordinate.charAt(1);
