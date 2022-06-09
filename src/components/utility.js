@@ -14,8 +14,8 @@ export function clearElement(element) {
 
 export function renderPassDeviceSplash(nextPlayerName, callbackFn) {
   const main = getEmptyMainElement();
-  const textDescOne = `Pass device to ${nextPlayerName}.`;
-  const textDescTwo = "Click to continue.";
+  const textDescOne = `Pass device to ${nextPlayerName}`;
+  const textDescTwo = "Click to continue";
 
   const splash = document.createElement("div");
   splash.setAttribute("class", "pass-device");
@@ -33,4 +33,24 @@ export function renderPassDeviceSplash(nextPlayerName, callbackFn) {
     splash.remove();
     callbackFn();
   });
+}
+
+export function setElementInactive(element) {
+  element.classList.add("inactive");
+}
+
+export function removeElementInactive(element) {
+  element.classList.remove("inactive");
+}
+
+export function toggleElementInactive(element) {
+  element.classList.toggle("inactive");
+}
+
+export function getRandomBinary() {
+  return Math.round(Math.random());
+}
+
+export function getRandomNumber(max) {
+  return Math.round(Math.random() * max);
 }
