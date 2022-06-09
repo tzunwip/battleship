@@ -1,4 +1,10 @@
-import { clearElement, getEmptyMainElement, renderPassDeviceSplash } from "./utility";
+import {
+  clearElement,
+  getEmptyMainElement,
+  getRandomBinary,
+  getRandomNumber,
+  renderPassDeviceSplash,
+} from "./utility";
 import { GAME, SHIPS_CONFIG, GRID_SIZE } from "../state/state";
 import { renderSelectPlayer } from "./select-player";
 
@@ -45,28 +51,17 @@ export function renderPlaceShips() {
   const resetButton = document.createElement("button");
   resetButton.textContent = "Reset";
   resetButton.type = "button";
-  resetButton.className = "place-ships__button";
+  resetButton.className = "place-ships__button place-ships__button--reset";
   container.appendChild(resetButton);
   resetButton.addEventListener("click", () => {
     resetPlaceBoard();
   });
+
+  renderRandomizeButton(container);
 }
 
 function getTargetGrids(headX, headY, length, orientation) {
-  let idArray = [];
-
-  switch (orientation) {
-    case "x":
-      for (let i = 0; i < length; i++) {
-        idArray.push(`x${Number(headX) + i}y${headY}`);
-      }
-      break;
-    case "y":
-      for (let i = 0; i < length; i++) {
-        idArray.push(`x${headX}y${Number(headY) + i}`);
-      }
-      break;
-  }
+  let idArray = getTargetCoordinates(headX, headY, length, orientation);
 
   return idArray.map((id) => {
     return document.getElementById(id);
@@ -102,7 +97,9 @@ function checkValidShipPlacement(shipId, headX, headY, length, orientation, grid
   return !isOccupied;
 }
 
-function updateShipGrids(shipId, oldNodes, newNodes) {
+function updateShipGrids(shipId, newNodes) {
+  const oldNodes = document.querySelectorAll(`.${shipId}`);
+
   oldNodes.forEach((node) => {
     node.classList.remove(shipId);
     node.classList.remove("occupied");
@@ -113,27 +110,27 @@ function updateShipGrids(shipId, oldNodes, newNodes) {
   });
 }
 
-function renderShipInStaging(shipInput) {
-  const stagingEle = document.querySelector(".place-ships__staging");
+function renderShip(parent, { id, shipLength, orientation = "y" }) {
   const shipContainer = document.createElement("div");
 
   // set ship styles
-  shipContainer.className = "place-ships__ship-container grid-column";
+  const orientationClass = orientation == "y" ? "grid-column" : "grid-row";
+  shipContainer.setAttribute("class", `place-ships__ship-container ${orientationClass}`);
   shipContainer.setAttribute("draggable", "true");
-  shipContainer.setAttribute("id", shipInput.id);
-  shipContainer.setAttribute("data-orientation", "y");
-  shipContainer.setAttribute("data-length", shipInput.shipLength);
-  stagingEle.appendChild(shipContainer);
+  shipContainer.setAttribute("id", id);
+  shipContainer.setAttribute("data-orientation", orientation);
+  shipContainer.setAttribute("data-length", shipLength);
+  parent.appendChild(shipContainer);
 
   // event listeners
   shipContainer.addEventListener("dragstart", (e) => {
     e.dataTransfer.dropEffect = "move";
     e.dataTransfer.effectAllowed = "move";
     const data = {
-      id: shipInput.id,
+      id,
       dragoffset: e.target.dataset.dragoffset,
       orientation: e.target.dataset.orientation,
-      length: shipInput.shipLength,
+      length: shipLength,
     };
     e.dataTransfer.setData("text/plain", JSON.stringify(data));
     setTimeout(() => {
@@ -152,7 +149,7 @@ function renderShipInStaging(shipInput) {
   });
 
   // render ship grid
-  for (let i = 0; i < shipInput.shipLength; i++) {
+  for (let i = 0; i < shipLength; i++) {
     const shipGrid = document.createElement("div");
     shipGrid.className = "place-ships__ship-grid";
     shipGrid.addEventListener("mousedown", (e) => {
@@ -173,7 +170,7 @@ function renderNextStagingElement(shipsConfig) {
     return shipEle == null;
   });
 
-  if (nextShip) renderShipInStaging(nextShip);
+  if (nextShip) renderShip(stagingEle, nextShip);
   else renderSubmitButton(stagingEle);
 }
 
@@ -251,8 +248,7 @@ function renderPlaceShipGrids(board) {
         if (!isValidPlacement) throw new Error("invalid ship placement");
 
         const shipId = data.id;
-        const oldGrids = document.querySelectorAll(`.${shipId}`);
-        updateShipGrids(shipId, oldGrids, targetGrids);
+        updateShipGrids(shipId, targetGrids);
 
         const headId = `x${headX}y${headY}`;
         const headGrid = document.getElementById(headId);
@@ -299,6 +295,18 @@ function renderSubmitButton(parent) {
   });
 }
 
+function renderRandomizeButton(parent) {
+  const randomizeButton = document.createElement("button");
+  randomizeButton.textContent = "Randomize";
+  randomizeButton.type = "button";
+  randomizeButton.className = "place-ships__button place-ships__button--randomize";
+  parent.appendChild(randomizeButton);
+  randomizeButton.addEventListener("click", () => {
+    const randomizedShips = randomizeShips(SHIPS_CONFIG, GRID_SIZE);
+    renderRandomizedBoard(randomizedShips);
+  });
+}
+
 function getPlacedShips(SHIPS_CONFIG) {
   return SHIPS_CONFIG.reduce((acc, ship) => {
     const shipGrids = document.querySelectorAll(`.${ship.id}`);
@@ -309,4 +317,89 @@ function getPlacedShips(SHIPS_CONFIG) {
 
     return [...acc, { id: ship.id, coordinates: shipCoordinates }];
   }, []);
+}
+
+function renderRandomizedBoard(randomizedShips) {
+  resetPlaceBoard();
+
+  console.log(randomizedShips);
+  randomizedShips.forEach((ship) => {
+    const headCoordinate = ship.coordinates[0];
+    const headX = headCoordinate.charAt(1);
+    const headY = headCoordinate.charAt(3);
+    const headGrid = document.querySelector(`#${headCoordinate}`);
+    const targetGrids = getTargetGrids(headX, headY, ship.shipLength, ship.orientation);
+
+    renderShip(headGrid, ship);
+    updateShipGrids(ship.id, targetGrids);
+  });
+
+  clearElement(document.querySelector("#staging"));
+  renderNextStagingElement(SHIPS_CONFIG);
+}
+
+function randomizeShips(shipsConfig, boardSize) {
+  // shipData = {id, length, coordinates: []}
+  const ships = [];
+  let occupiedCoordinates = [];
+
+  shipsConfig.forEach((shipConfig) => {
+    const newShip = randomPlaceShip(shipConfig, occupiedCoordinates, boardSize);
+
+    ships.push(newShip);
+    occupiedCoordinates = [...occupiedCoordinates, ...newShip.coordinates];
+  });
+
+  return ships;
+}
+
+function randomPlaceShip({ id, shipLength }, occupiedCoordinates, boardSize) {
+  const randomOrientation = getRandomBinary() ? "x" : "y";
+  const maxX = randomOrientation == "x" ? boardSize - shipLength - 1 : boardSize - 1;
+  const maxY = randomOrientation == "y" ? boardSize - shipLength - 1 : boardSize - 1;
+  let coordinates = [];
+
+  while (coordinates.length === 0) {
+    const randomX = getRandomNumber(maxX);
+    const randomY = getRandomNumber(maxY);
+
+    const targetCoordinates = getTargetCoordinates(randomX, randomY, shipLength, randomOrientation);
+
+    const isInvalid = targetCoordinates.some((targetCoord) => {
+      return occupiedCoordinates.some((occupiedCoord) => {
+        return occupiedCoord == targetCoord;
+      });
+    });
+
+    if (!isInvalid) {
+      coordinates = targetCoordinates;
+      break;
+    }
+  }
+
+  return {
+    id,
+    shipLength,
+    coordinates,
+    orientation: randomOrientation,
+  };
+}
+
+function getTargetCoordinates(headX, headY, length, orientation) {
+  let idArray = [];
+
+  switch (orientation) {
+    case "x":
+      for (let i = 0; i < length; i++) {
+        idArray.push(`x${Number(headX) + i}y${headY}`);
+      }
+      break;
+    case "y":
+      for (let i = 0; i < length; i++) {
+        idArray.push(`x${headX}y${Number(headY) + i}`);
+      }
+      break;
+  }
+
+  return idArray;
 }
