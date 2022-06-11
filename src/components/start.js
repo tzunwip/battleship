@@ -1,4 +1,4 @@
-import { GAME } from "../state/state";
+import { GAME, GAME_MODE } from "../state/state";
 import { getEmptyMainElement } from "./utility";
 import { renderNameInput } from "./name-input";
 
@@ -7,6 +7,7 @@ export default function renderStart() {
   const titleText = "Battleships";
   const descText = "Choose game mode:";
   const pvpText = "2 Players";
+  const computerText = "Computer";
 
   const container = document.createElement("div");
   container.className = "start";
@@ -26,11 +27,22 @@ export default function renderStart() {
   pvpButton.type = "button";
   pvpButton.className = "start__button";
   pvpButton.addEventListener("click", () => {
+    GAME_MODE = "pvp";
     GAME.resetGame();
     renderNameInput("pvp");
   });
-
   container.appendChild(pvpButton);
+
+  const vsComputerButton = document.createElement("button");
+  vsComputerButton.textContent = computerText;
+  vsComputerButton.type = "button";
+  vsComputerButton.className = "start__button";
+  vsComputerButton.addEventListener("click", () => {
+    GAME_MODE = "computer";
+    GAME.resetGame();
+    renderNameInput();
+  });
+  container.appendChild(vsComputerButton);
 
   main.appendChild(container);
 }
