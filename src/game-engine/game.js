@@ -1,66 +1,66 @@
 import Gameboard from "./gameboard";
 
 export default class Game {
-  #players = [];
-  #activePlayer = 0;
-  #hasStarted = false;
+  players = [];
+  activePlayer = 0;
+  hasStarted = false;
 
   createPlayer(newPlayerInput) {
-    if (this.#players.length < 2) {
-      this.#players.push(new Gameboard(newPlayerInput));
+    if (this.players.length < 2) {
+      this.players.push(new Gameboard(newPlayerInput));
     }
   }
 
   placeShips(shipsInput) {
-    const activeBoard = this.#players[this.#activePlayer];
+    const activeBoard = this.players[this.activePlayer];
 
     shipsInput.forEach((newShipInput) => {
       activeBoard.placeShip(newShipInput);
     });
 
-    this.#advanceTurn();
+    this.advanceTurn();
 
     return activeBoard;
   }
 
-  #advanceTurn() {
-    if (this.#activePlayer) {
-      this.#activePlayer = 0;
+  advanceTurn() {
+    if (this.activePlayer) {
+      this.activePlayer = 0;
     } else {
-      this.#activePlayer = 1;
+      this.activePlayer = 1;
     }
   }
 
   getMyName() {
-    return this.#players[this.#activePlayer].playerName;
+    return this.players[this.activePlayer].playerName;
   }
 
   getOpponentsName() {
-    return this.#getOpponent().playerName;
+    return this.getOpponent().playerName;
   }
 
-  #getOpponent() {
-    if (this.#activePlayer) {
-      return this.#players[0];
+  getOpponent() {
+    if (this.activePlayer) {
+      return this.players[0];
     } else {
-      return this.#players[1];
+      return this.players[1];
     }
   }
 
   getPublicBoards() {
-    return [this.#players[0].getPublicBoard(), this.#players[1].getPublicBoard()];
+    return [this.players[0].getPublicBoard(), this.players[1].getPublicBoard()];
   }
 
   getMyBoard() {
-    return this.#players[this.#activePlayer].boardDatabase;
+    return this.players[this.activePlayer].boardDatabase;
   }
 
   getActivePlayerId() {
-    return this.#activePlayer;
+    return this.activePlayer;
   }
 
   isInputComplete(requiredShips) {
-    const arePlayerBoardsPopulated = this.#players.every((player) => {
+    const arePlayerBoardsPopulated = this.players.every((player) => {
       return requiredShips.every((ship) => {
         return ship.id in player.shipsDatabase;
       });
@@ -70,20 +70,20 @@ export default class Game {
   }
 
   startGame(firstMover) {
-    if (!this.#hasStarted) {
-      this.#hasStarted = 1;
-      this.#activePlayer = firstMover;
+    if (!this.hasStarted) {
+      this.hasStarted = 1;
+      this.activePlayer = firstMover;
     }
   }
 
   makeAttack({ coordinate, playerId }) {
     // checks input origintes from opponent board only
-    if (playerId == this.#activePlayer) {
+    if (playerId == this.activePlayer) {
       console.error("invalid playerId");
       return;
     }
 
-    const opponentPlayer = this.#getOpponent();
+    const opponentPlayer = this.getOpponent();
     const attackResult = opponentPlayer.receiveAttack(coordinate);
     const hasOpponentLost = opponentPlayer.areAllShipsSunk();
 
@@ -98,19 +98,14 @@ export default class Game {
       return { result: "won", winningPlayer: this.getMyName(), ship: attackResult.ship };
     }
 
-    this.#advanceTurn();
+    this.advanceTurn();
 
-    if (opponentPlayer.isComputer) {
-      // execute computer mask & delayed computer attack
-    } else {
-      // render mask for next human player
-      return attackResult;
-    }
+    return attackResult;
   }
 
   resetGame() {
-    this.#players = [];
-    this.#activePlayer = 0;
-    this.#hasStarted = false;
+    this.players = [];
+    this.activePlayer = 0;
+    this.hasStarted = false;
   }
 }
