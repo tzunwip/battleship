@@ -283,14 +283,19 @@ function renderSubmitButton(parent) {
   parent.appendChild(submitButton);
   submitButton.addEventListener("click", () => {
     const ships = getPlacedShips(SHIPS_CONFIG);
-    const nextPlayerName = GAME.getOpponentsName();
+    const nextPlayer = GAME.getOpponent();
 
     GAME.placeShips(ships);
+
+    if (nextPlayer.isComputer) {
+      const randomizedShips = randomizeShips(SHIPS_CONFIG, GRID_SIZE);
+      GAME.placeShips(randomizedShips);
+    }
 
     if (GAME.isInputComplete(SHIPS_CONFIG)) {
       renderSelectPlayer();
     } else {
-      renderPassDeviceSplash(nextPlayerName, renderPlaceShips);
+      renderPassDeviceSplash(nextPlayer.playerName, renderPlaceShips);
     }
   });
 }
