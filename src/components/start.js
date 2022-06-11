@@ -27,7 +27,6 @@ export default function renderStart() {
   pvpButton.type = "button";
   pvpButton.className = "start__button";
   pvpButton.addEventListener("click", () => {
-    GAME_MODE = "pvp";
     GAME.resetGame();
     renderNameInput("pvp");
   });
@@ -38,7 +37,6 @@ export default function renderStart() {
   vsComputerButton.type = "button";
   vsComputerButton.className = "start__button";
   vsComputerButton.addEventListener("click", () => {
-    GAME_MODE = "computer";
     GAME.resetGame();
     renderNameInput();
   });
