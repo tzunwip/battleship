@@ -1,14 +1,20 @@
+import Computer from "./computer";
 import Gameboard from "./gameboard";
 
 export default class Game {
   players = [];
   activePlayer = 0;
   hasStarted = false;
+  computer;
 
   createPlayer(newPlayerInput) {
-    if (this.players.length < 2) {
-      this.players.push(new Gameboard(newPlayerInput));
+    if (this.players.length >= 2) return;
+
+    if (newPlayerInput.isComputer) {
+      this.computer = new Computer(newPlayerInput.playerId);
     }
+
+    this.players.push(new Gameboard(newPlayerInput));
   }
 
   placeShips(shipsInput) {
@@ -74,6 +80,14 @@ export default class Game {
       this.hasStarted = 1;
       this.activePlayer = firstMover;
     }
+
+    if (this.players[this.activePlayer].isComputer) {
+      this.makeComputerAttack();
+    }
+  }
+
+  makeComputerAttack() {
+    this.computer.sendAttack(this);
   }
 
   makeAttack({ coordinate, playerId }) {
