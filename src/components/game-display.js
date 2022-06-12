@@ -14,14 +14,16 @@ export function renderGameDisplay() {
   container.setAttribute("class", "game-display");
   main.appendChild(container);
 
-  const publicPlayerBoards = GAME.getPublicBoards();
-  renderPlayerGameDisplay(container, 0, publicPlayerBoards[0].playerName);
-  renderPlayerGameDisplay(container, 1, publicPlayerBoards[1].playerName);
+  renderIndividualGameDisplay(container, 0);
+  renderIndividualGameDisplay(container, 1);
 
   setGameDisplayStyles();
 }
 
-function renderPlayerGameDisplay(parent, playerId, playerName) {
+function renderIndividualGameDisplay(parent, playerId) {
+  const playerData = { ...GAME.players[playerId], playerId };
+  const { playerName } = playerData;
+
   const playerContainer = document.createElement("div");
   playerContainer.setAttribute("class", "game-display__player");
   playerContainer.setAttribute("id", `player${playerId}`);
@@ -29,7 +31,7 @@ function renderPlayerGameDisplay(parent, playerId, playerName) {
 
   const nameDiv = document.createElement("h4");
   nameDiv.setAttribute("class", "game-display__player-name");
-  nameDiv.textContent = `${playerName}'s Board`;
+  nameDiv.textContent = `${playerName}'s Ships`;
   playerContainer.appendChild(nameDiv);
 
   const boardDiv = document.createElement("div");
@@ -37,13 +39,14 @@ function renderPlayerGameDisplay(parent, playerId, playerName) {
   boardDiv.setAttribute("data-playerid", playerId);
   playerContainer.appendChild(boardDiv);
 
-  renderGameDisplayGrids(boardDiv, playerId);
-
-  const shipStatus = document.createElement("div");
-  playerContainer.appendChild(shipStatus);
+  renderGameDisplayGrids(boardDiv, playerData);
 }
 
-function renderGameDisplayGrids(parent, playerId) {
+function renderGameDisplayGrids(parent, playerData) {
+  const { playerId, boardDatabase } = playerData;
+  const isOpponentComputer = GAME.getOpponent(playerId).isComputer;
+  console.log(playerData);
+
   for (let y = 0; y < GRID_SIZE; y++) {
     for (let x = 0; x < GRID_SIZE; x++) {
       const coordinate = `x${x}y${y}`;
@@ -51,11 +54,8 @@ function renderGameDisplayGrids(parent, playerId) {
       grid.setAttribute("class", `game-display__grid ${coordinate}`);
       parent.appendChild(grid);
 
-      grid.addEventListener("click", () => {
-        const attackResult = GAME.makeAttack({ coordinate, playerId });
-        setGameDisplayStyles();
-        setGridStyle(grid, attackResult);
-      });
+      if (!isOpponentComputer) setGridEventListener({ grid, playerId, coordinate });
+      if (isOpponentComputer && coordinate in boardDatabase) setRevealShipStyle(grid);
     }
   }
 }
@@ -74,14 +74,12 @@ function setGridStyle(grid, attackResult) {
   switch (attackResult.result) {
     case "hit":
       setGridHitStyle(grid);
-      console.log(attackResult);
       break;
     case "miss":
       setGridMissStyle(grid);
       break;
     case "sunk":
       setSunkShipStyle(grid, attackResult);
-      console.log(attackResult);
       break;
     case "won":
       setSunkShipStyle(grid, attackResult);
@@ -111,10 +109,26 @@ function setSunkShipStyle(grid, attackResult) {
   const sunkShipGrids = board.querySelectorAll(queryString);
 
   sunkShipGrids.forEach((grid) => {
-    grid.classList.remove("hit");
+    grid.classList.remove("hit", "reveal");
     grid.classList.add("sunk");
     clearElement(grid);
   });
+}
+
+function setRevealShipStyle(grid) {
+  if (!grid.classList.contains("sunk")) grid.classList.add("reveal");
+}
+
+export function renderComputerAttack(attackResult) {
+  if (!attackResult) return;
+  console.log(attackResult);
+
+  const { playerId, x, y } = attackResult;
+
+  const grid = document.querySelector(`#player${playerId} .x${x}y${y}`);
+
+  setGridStyle(grid, attackResult);
+  setGameDisplayStyles();
 }
 
 function renderGameWonPopup(winningPlayerName) {
@@ -141,5 +155,13 @@ function renderGameWonPopup(winningPlayerName) {
   mask.addEventListener("click", () => {
     mask.remove();
     renderStart();
+  });
+}
+
+function setGridEventListener({ grid, playerId, coordinate }) {
+  grid.addEventListener("click", () => {
+    const attackResult = GAME.makeAttack({ coordinate, playerId });
+    setGameDisplayStyles();
+    setGridStyle(grid, attackResult);
   });
 }

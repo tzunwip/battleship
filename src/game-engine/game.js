@@ -1,17 +1,19 @@
 import Computer from "./computer";
 import Gameboard from "./gameboard";
+import { renderComputerAttack } from "../components/game-display";
 
 export default class Game {
   players = [];
   activePlayer = 0;
   hasStarted = false;
   computer;
+  config = { mode: "" };
 
   createPlayer(newPlayerInput) {
     if (this.players.length >= 2) return;
 
     if (newPlayerInput.isComputer) {
-      this.computer = new Computer(newPlayerInput.playerId);
+      this.computer = new Computer(this, this.activePlayer);
     }
 
     this.players.push(new Gameboard(newPlayerInput));
@@ -45,8 +47,8 @@ export default class Game {
     return this.getOpponent().playerName;
   }
 
-  getOpponent() {
-    if (this.activePlayer) {
+  getOpponent(playerId = this.activePlayer) {
+    if (playerId == 1) {
       return this.players[0];
     } else {
       return this.players[1];
@@ -87,14 +89,18 @@ export default class Game {
   }
 
   makeComputerAttack() {
-    this.computer.sendAttack(this);
+    setTimeout(() => {
+      const attackResult = this.computer.sendAttack();
+      renderComputerAttack(attackResult);
+      console.log("computer attacked");
+    }, 1000);
   }
 
   makeAttack({ coordinate, playerId }) {
     // checks input origintes from opponent board only
-    if (playerId == this.activePlayer) {
+    if (playerId === this.activePlayer) {
       console.error("invalid playerId");
-      return;
+      return { result: "invalid", reason: "playerId" };
     }
 
     const opponentPlayer = this.getOpponent();
@@ -104,7 +110,7 @@ export default class Game {
     // check if attack valid
     if (!attackResult) {
       console.error("invalid attack");
-      return;
+      return { result: "invalid", reason: "occupied" };
     }
 
     // check winning condition
@@ -113,6 +119,8 @@ export default class Game {
     }
 
     this.advanceTurn();
+
+    if (opponentPlayer.isComputer) this.makeComputerAttack();
 
     return attackResult;
   }

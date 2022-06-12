@@ -6,8 +6,9 @@ export default class Computer {
   attackHistory = {};
   attackQueue = [];
 
-  constructor(playerId) {
+  constructor(game, playerId) {
     this.playerId = playerId;
+    this.game = game;
     this.init();
   }
 
@@ -31,69 +32,72 @@ export default class Computer {
 
   getRandomAttackCoordinate() {
     const randomNumber = getRandomNumber(this.attackPattern.length - 1);
-    return this.attackPattern.splice(randomNumber, 1);
+    return { ...this.attackPattern[randomNumber], attackPatternIndex: randomNumber };
   }
 
   getAttackString(attackCoordinates) {
     return `x${attackCoordinates.x}y${attackCoordinates.y}`;
   }
 
-  sendAttack(game) {
-    if (this.attackQueue.length > 0) {
-      const attackCoordinate = this.attackQueue.splice(0, 1);
-      const coordinate = getAttackString(attackCoordinate);
-      const attackResult = game.makeAttack({ coordinate, playerId: this.playerId });
+  sendAttack() {
+    const attackCoordinate = this.getAttackCoordinate();
+    const coordinate = this.getAttackString(attackCoordinate);
+    const attackResult = this.game.makeAttack({ coordinate, playerId: this.playerId });
 
-      this.recordAttackWithQueue(attackCoordinate, attackResult);
-    } else {
-      const attackCoordinate = this.attackPattern[getRandomNumber(this.attackPattern.length - 1)];
-      const coordinate = this.getAttackString(attackCoordinate);
-      const attackResult = game.makeAttack({ coordinate, playerId: this.playerId });
-
-      this.recordAttackWithoutQueue(attackCoordinate, attackResult);
+    if (attackResult?.result !== "invalid") {
+      this.recordAttack(attackCoordinate, attackResult);
+      this.updateAttackHistory();
+      return { ...attackResult, ...attackCoordinate, playerId: this.playerId };
     }
 
-    console.log(this.attackHistory);
-    console.log(this.attackPattern);
-    console.log(this.attackQueue);
+    if (attackResult?.reason == "occupied") {
+      this.purgeOccupied(attackResult);
+    }
+  }
+
+  getAttackCoordinate() {
+    if (this.attackQueue.length > 0) {
+      return { ...this.attackQueue[0], source: "queue" };
+    } else {
+      return { ...this.getRandomAttackCoordinate(), source: "pattern" };
+    }
+  }
+
+  recordAttack(attackCoordinate, attackResult) {
+    if (this.attackQueue.length > 0) {
+      this.attackQueue.splice(0, 1);
+      this.recordAttackWithQueue(attackCoordinate, attackResult);
+    } else {
+      const index = attackCoordinate.attackPatternIndex;
+      this.attackPattern.splice(index, 1);
+      this.recordAttackWithoutQueue(attackCoordinate, attackResult);
+    }
   }
 
   recordAttackWithoutQueue(attackCoordinate, attackResult) {
-    switch (attackResult.result) {
-      case "miss":
-        this.recordAttackHistory(attackCoordinate, "miss");
-        break;
-      case "hit":
-        this.recordAttackHistory(attackCoordinate, "hit");
-        this.attackQueue = this.generateScoutAttackQueue(attackCoordinate, GRID_SIZE);
-        break;
+    if (attackResult.result == "hit") {
+      this.attackQueue = this.generateScoutAttackQueue(attackCoordinate, GRID_SIZE);
     }
   }
 
   recordAttackWithQueue(attackCoordinate, attackResult) {
+    if (attackCoordinate.offsetFromPivot % 2 == 0) {
+      this.purgeCoordinateFromAttackPattern(attackCoordinate);
+    }
+
     switch (attackResult.result) {
-      case "miss":
-        this.recordAttackHistory(attackCoordinate, "miss");
-        break;
       case "hit":
-        this.recordAttackHistory(attackCoordinate, "hit");
         const nextAttack = this.generateAttackInDirection(attackCoordinate, GRID_SIZE);
         if (nextAttack) this.attackQueue.unshift(nextAttack);
         break;
       case "sunk":
-        this.recordAttackHistory(attackCoordinate, "hit");
         this.resetAttackQueue();
         break;
     }
-
-    if (attackCoordinate.offsetFromPivot % 2 == 0) {
-      this.purgeCoordinateFromAttackHistory(attackCoordinate);
-    }
   }
 
-  recordAttackHistory(attackCoordinate, result) {
-    const attackString = this.getAttackString(attackCoordinate);
-    this.attackHistory[attackString] = result;
+  updateAttackHistory() {
+    this.attackHistory = this.game.getPublicBoards()[this.playerId].publicBoard;
   }
 
   purgeCoordinateFromAttackPattern(attackCoordinate) {
@@ -104,35 +108,51 @@ export default class Computer {
     this.attackPattern.splice(index, 1);
   }
 
-  generateScoutAttackQueue(pivot, gridSize) {
-    const directions = ["n", "s", "w", "e"];
+  purgeOccupied(attackResult) {
+    if (attackResult.source == "pattern") {
+      const index = attackResult.attackPatternIndex;
+      this.attackPattern.splice(index, 1);
+    }
+    if (attackResult.source == "queue") {
+      this.attackQueue.splice(0, 1);
+    }
+  }
 
-    return directions.map((direction) => {
-      return this.generateAttackInDirection({ ...pivot, direction }, gridSize);
+  generateScoutAttackQueue(attackCoordinate, gridSize) {
+    const directions = ["n", "s", "w", "e"];
+    const queue = [];
+
+    directions.forEach((direction) => {
+      const obj = this.generateAttackInDirection({ ...attackCoordinate, direction }, gridSize);
+      if (obj) {
+        return queue.push(obj);
+      }
     });
+
+    return queue;
   }
 
   generateAttackInDirection({ x, y, direction, offsetFromPivot = 0 }, gridSize) {
     switch (direction) {
       // conditionals to check within bounds && not attacked before
       case "n":
-        const n = { x, y: y - 1, direction, offsetFromPivot: offsetFromPivot++ };
-        if (n.y > 0 && !this.getAttackString(n) in this.attackHistory) return n;
+        const n = { x, y: y - 1, direction, offsetFromPivot: (offsetFromPivot += 1) };
+        if (n.y >= 0 && !(this.getAttackString(n) in this.attackHistory)) return n;
         break;
 
       case "s":
-        const s = { x, y: y + 1, direction, offsetFromPivot: offsetFromPivot++ };
-        if (s.y < gridSize && !this.getAttackString(s) in this.attackHistory) return s;
+        const s = { x, y: y + 1, direction, offsetFromPivot: (offsetFromPivot += 1) };
+        if (s.y < gridSize && !(this.getAttackString(s) in this.attackHistory)) return s;
         break;
 
       case "w":
-        const w = { x: x - 1, y, direction, offsetFromPivot: offsetFromPivot++ };
-        if (w.x > 0 && !this.getAttackString(w) in this.attackHistory) return w;
+        const w = { x: x - 1, y, direction, offsetFromPivot: (offsetFromPivot += 1) };
+        if (w.x >= 0 && !(this.getAttackString(w) in this.attackHistory)) return w;
         break;
 
       case "e":
-        const e = { x: x + 1, y, direction, offsetFromPivot: offsetFromPivot++ };
-        if (e.x < gridSize && !this.getAttackString(e) in this.attackHistory) return e;
+        const e = { x: x + 1, y, direction, offsetFromPivot: (offsetFromPivot += 1) };
+        if (e.x < gridSize && !(this.getAttackString(e) in this.attackHistory)) return e;
         break;
     }
   }
