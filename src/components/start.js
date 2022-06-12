@@ -1,4 +1,4 @@
-import { GAME, GAME_MODE } from "../state/state";
+import { GAME } from "../state/state";
 import { getEmptyMainElement } from "./utility";
 import { renderNameInput } from "./name-input";
 
@@ -28,7 +28,8 @@ export default function renderStart() {
   pvpButton.className = "start__button";
   pvpButton.addEventListener("click", () => {
     GAME.resetGame();
-    renderNameInput("pvp");
+    GAME.config.mode = "pvp";
+    renderNameInput();
   });
   container.appendChild(pvpButton);
 
@@ -38,6 +39,7 @@ export default function renderStart() {
   vsComputerButton.className = "start__button";
   vsComputerButton.addEventListener("click", () => {
     GAME.resetGame();
+    GAME.config.mode = "computer";
     renderNameInput();
   });
   container.appendChild(vsComputerButton);

@@ -2,14 +2,14 @@ import { getEmptyMainElement } from "./utility";
 import { GAME } from "../state/state";
 import { renderPlaceShips } from "./place-ships";
 
-export function renderNameInput(config) {
+export function renderNameInput() {
   const main = getEmptyMainElement();
-  const isPvp = config == "pvp" ? true : false;
+  const isPvp = GAME.config.mode == "pvp" ? true : false;
   const titleText = `Enter your name${isPvp ? "s" : ""}:`;
   const inputOneText = isPvp ? "Player One" : "Player";
   const inputTwoText = "Player Two";
   const buttonText = "Continue";
-  const computer = {
+  const computerInput = {
     name: "Computer",
     isComputer: true,
   };
@@ -30,7 +30,7 @@ export function renderNameInput(config) {
   inputOne.className = "name-input__text-input";
   container.appendChild(inputOne);
 
-  if (config == "pvp") {
+  if (isPvp) {
     const inputTwo = document.createElement("input");
     inputTwo.placeholder = inputTwoText;
     inputTwo.required = "true";
@@ -57,7 +57,7 @@ export function renderNameInput(config) {
       });
 
       if (inputNodes.length == 1) {
-        GAME.createPlayer(computer);
+        GAME.createPlayer(computerInput);
       }
 
       renderPlaceShips();
