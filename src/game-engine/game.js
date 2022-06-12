@@ -6,17 +6,19 @@ export default class Game {
   players = [];
   activePlayer = 0;
   hasStarted = false;
-  computer;
+  computer = {};
   config = { mode: "" };
 
   createPlayer(newPlayerInput) {
     if (this.players.length >= 2) return;
 
     if (newPlayerInput.isComputer) {
-      this.computer = new Computer(this, this.activePlayer);
+      this.computer[this.activePlayer] = new Computer(this, this.activePlayer);
     }
 
     this.players.push(new Gameboard(newPlayerInput));
+
+    this.advanceTurn();
   }
 
   placeShips(shipsInput) {
@@ -63,10 +65,6 @@ export default class Game {
     return this.players[this.activePlayer].boardDatabase;
   }
 
-  getActivePlayerId() {
-    return this.activePlayer;
-  }
-
   isInputComplete(requiredShips) {
     const arePlayerBoardsPopulated = this.players.every((player) => {
       return requiredShips.every((ship) => {
@@ -90,15 +88,14 @@ export default class Game {
 
   makeComputerAttack() {
     setTimeout(() => {
-      const attackResult = this.computer.sendAttack();
+      const attackResult = this.computer[this.activePlayer].sendAttack();
       renderComputerAttack(attackResult);
-      console.log("computer attacked");
     }, 1000);
   }
 
-  makeAttack({ coordinate, playerId }) {
+  makeAttack({ coordinate, receivingPlayerId }) {
     // checks input origintes from opponent board only
-    if (playerId === this.activePlayer) {
+    if (receivingPlayerId == this.activePlayer) {
       console.error("invalid playerId");
       return { result: "invalid", reason: "playerId" };
     }

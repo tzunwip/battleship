@@ -47,11 +47,12 @@ export function renderNameInput() {
     e.preventDefault();
     if (container.reportValidity()) {
       const inputNodes = document.querySelectorAll("input");
+      const gameMode = GAME.config.mode;
 
       inputNodes.forEach((ele) => {
         const newPlayerInput = {
           name: ele.value,
-          isComputer: false,
+          isComputer: gameMode == "auto" ? true : false,
         };
         GAME.createPlayer(newPlayerInput);
       });

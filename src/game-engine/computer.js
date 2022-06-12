@@ -40,14 +40,15 @@ export default class Computer {
   }
 
   sendAttack() {
+    const receivingPlayerId = this.playerId ? 0 : 1;
     const attackCoordinate = this.getAttackCoordinate();
     const coordinate = this.getAttackString(attackCoordinate);
-    const attackResult = this.game.makeAttack({ coordinate, playerId: this.playerId });
+    const attackResult = this.game.makeAttack({ coordinate, receivingPlayerId });
 
     if (attackResult?.result !== "invalid") {
       this.recordAttack(attackCoordinate, attackResult);
       this.updateAttackHistory();
-      return { ...attackResult, ...attackCoordinate, playerId: this.playerId };
+      return { ...attackResult, ...attackCoordinate, receivingPlayerId };
     }
 
     if (attackResult?.reason == "occupied") {
@@ -97,7 +98,8 @@ export default class Computer {
   }
 
   updateAttackHistory() {
-    this.attackHistory = this.game.getPublicBoards()[this.playerId].publicBoard;
+    const opponentPlayerId = this.playerId ? 0 : 1;
+    this.attackHistory = this.game.getPublicBoards()[opponentPlayerId].publicBoard;
   }
 
   purgeCoordinateFromAttackPattern(attackCoordinate) {

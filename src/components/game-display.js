@@ -45,7 +45,6 @@ function renderIndividualGameDisplay(parent, playerId) {
 function renderGameDisplayGrids(parent, playerData) {
   const { playerId, boardDatabase } = playerData;
   const isOpponentComputer = GAME.getOpponent(playerId).isComputer;
-  console.log(playerData);
 
   for (let y = 0; y < GRID_SIZE; y++) {
     for (let x = 0; x < GRID_SIZE; x++) {
@@ -61,7 +60,7 @@ function renderGameDisplayGrids(parent, playerData) {
 }
 
 function setGameDisplayStyles() {
-  const activePlayerId = GAME.getActivePlayerId();
+  const activePlayerId = GAME.activePlayer;
   const inactivePlayerId = activePlayerId ? 0 : 1;
   const playerElements = [document.querySelector("#player0"), document.querySelector("#player1")];
 
@@ -121,11 +120,10 @@ function setRevealShipStyle(grid) {
 
 export function renderComputerAttack(attackResult) {
   if (!attackResult) return;
-  console.log(attackResult);
 
-  const { playerId, x, y } = attackResult;
+  const { receivingPlayerId, x, y } = attackResult;
 
-  const grid = document.querySelector(`#player${playerId} .x${x}y${y}`);
+  const grid = document.querySelector(`#player${receivingPlayerId} .x${x}y${y}`);
 
   setGridStyle(grid, attackResult);
   setGameDisplayStyles();
@@ -158,9 +156,9 @@ function renderGameWonPopup(winningPlayerName) {
   });
 }
 
-function setGridEventListener({ grid, playerId, coordinate }) {
+function setGridEventListener({ grid, receivingPlayerId, coordinate }) {
   grid.addEventListener("click", () => {
-    const attackResult = GAME.makeAttack({ coordinate, playerId });
+    const attackResult = GAME.makeAttack({ coordinate, receivingPlayerId });
     setGameDisplayStyles();
     setGridStyle(grid, attackResult);
   });
