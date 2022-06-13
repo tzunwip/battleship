@@ -46,8 +46,8 @@ export default class Computer {
     const attackResult = this.game.makeAttack({ coordinate, receivingPlayerId });
 
     if (attackResult?.result !== "invalid") {
-      this.recordAttack(attackCoordinate, attackResult);
       this.updateAttackHistory();
+      this.recordAttack(attackCoordinate, attackResult);
       return { ...attackResult, ...attackCoordinate, receivingPlayerId };
     }
 
@@ -77,14 +77,12 @@ export default class Computer {
 
   recordAttackWithoutQueue(attackCoordinate, attackResult) {
     if (attackResult.result == "hit") {
-      this.attackQueue = this.generateScoutAttackQueue(attackCoordinate, GRID_SIZE);
+      this.generateScoutAttackQueue(attackCoordinate, GRID_SIZE);
     }
   }
 
   recordAttackWithQueue(attackCoordinate, attackResult) {
-    if (attackCoordinate.offsetFromPivot % 2 == 0) {
-      this.purgeCoordinateFromAttackPattern(attackCoordinate);
-    }
+    this.purgeCoordinateFromAttackPattern(attackCoordinate);
 
     switch (attackResult.result) {
       case "hit":
@@ -93,6 +91,9 @@ export default class Computer {
         break;
       case "sunk":
         this.resetAttackQueue();
+
+        const unsunkHit = this.searchForUnsunkHit(this.attackHistory);
+        if (unsunkHit) this.generateScoutAttackQueue(unsunkHit, GRID_SIZE);
         break;
     }
   }
@@ -107,7 +108,7 @@ export default class Computer {
       return attackCoordinate.x == obj.x && attackCoordinate.y == obj.y;
     });
 
-    this.attackPattern.splice(index, 1);
+    if (index != -1) this.attackPattern.splice(index, 1);
   }
 
   purgeOccupied(attackResult) {
@@ -131,32 +132,41 @@ export default class Computer {
       }
     });
 
-    return queue;
+    this.attackQueue = queue;
   }
 
-  generateAttackInDirection({ x, y, direction, offsetFromPivot = 0 }, gridSize) {
+  generateAttackInDirection({ x, y, direction }, gridSize) {
     switch (direction) {
       // conditionals to check within bounds && not attacked before
       case "n":
-        const n = { x, y: y - 1, direction, offsetFromPivot: (offsetFromPivot += 1) };
+        const n = { x, y: y - 1, direction };
         if (n.y >= 0 && !(this.getAttackString(n) in this.attackHistory)) return n;
         break;
 
       case "s":
-        const s = { x, y: y + 1, direction, offsetFromPivot: (offsetFromPivot += 1) };
+        const s = { x, y: y + 1, direction };
         if (s.y < gridSize && !(this.getAttackString(s) in this.attackHistory)) return s;
         break;
 
       case "w":
-        const w = { x: x - 1, y, direction, offsetFromPivot: (offsetFromPivot += 1) };
+        const w = { x: x - 1, y, direction };
         if (w.x >= 0 && !(this.getAttackString(w) in this.attackHistory)) return w;
         break;
 
       case "e":
-        const e = { x: x + 1, y, direction, offsetFromPivot: (offsetFromPivot += 1) };
+        const e = { x: x + 1, y, direction };
         if (e.x < gridSize && !(this.getAttackString(e) in this.attackHistory)) return e;
         break;
     }
+  }
+
+  searchForUnsunkHit(attackHistory) {
+    const coordinateString = Object.keys(attackHistory).find((coordinate) => {
+      return attackHistory[coordinate]?.hasShip && !attackHistory[coordinate]?.isSunk;
+    });
+
+    if (coordinateString)
+      return { x: Number(coordinateString.charAt(1)), y: Number(coordinateString.charAt(3)) };
   }
 
   resetAttackQueue() {

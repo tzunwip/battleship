@@ -56,6 +56,7 @@ export default class Gameboard {
       grid.isAttacked = true;
       grid.ship.hit(position);
       if (grid.ship.isSunk()) {
+        this.setCoordinatesSunk(grid.ship.status);
         return { result: "sunk", ship: grid.ship };
       } else {
         return { result: "hit" };
@@ -65,6 +66,12 @@ export default class Gameboard {
     if (grid.isAttacked == true) {
       return console.error("error receiveAttack(), grid has been attacked already");
     }
+  }
+
+  setCoordinatesSunk(status) {
+    Object.keys(status).forEach((coordinate) => {
+      this.boardDatabase[coordinate].isSunk = true;
+    });
   }
 
   getShipStatus() {
@@ -85,8 +92,16 @@ export default class Gameboard {
   getPublicBoard() {
     const boardDatabase = this.boardDatabase;
     const publicBoard = Object.keys(boardDatabase).reduce((acc, key) => {
-      if ("isAttacked" in boardDatabase[key]) {
-        return { ...acc, [key]: { isAttacked: true, hasShip: "ship" in boardDatabase[key] } };
+      const boardDatabaseCoordinate = boardDatabase[key];
+      if ("isAttacked" in boardDatabaseCoordinate) {
+        return {
+          ...acc,
+          [key]: {
+            isAttacked: true,
+            hasShip: "ship" in boardDatabaseCoordinate,
+            isSunk: "isSunk" in boardDatabaseCoordinate,
+          },
+        };
       }
       return acc;
     }, {});
