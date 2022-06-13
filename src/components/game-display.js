@@ -63,10 +63,13 @@ function setGameDisplayStyles() {
   const activePlayerId = GAME.activePlayer;
   const inactivePlayerId = activePlayerId ? 0 : 1;
   const playerElements = [document.querySelector("#player0"), document.querySelector("#player1")];
+  const isAutoGameMode = GAME.config.mode == "auto";
 
   // only opponent's board should stand out
-  setElementInactive(playerElements[activePlayerId]);
-  removeElementInactive(playerElements[inactivePlayerId]);
+  if (!isAutoGameMode) {
+    setElementInactive(playerElements[activePlayerId]);
+    removeElementInactive(playerElements[inactivePlayerId]);
+  }
 }
 
 function setGridStyle(grid, attackResult) {
