@@ -159,9 +159,9 @@ function renderGameWonPopup(winningPlayerName) {
   });
 }
 
-function setGridEventListener({ grid, receivingPlayerId, coordinate }) {
+function setGridEventListener({ grid, playerId, coordinate }) {
   grid.addEventListener("click", () => {
-    const attackResult = GAME.makeAttack({ coordinate, receivingPlayerId });
+    const attackResult = GAME.makeAttack({ coordinate, receivingPlayerId: playerId });
     setGameDisplayStyles();
     setGridStyle(grid, attackResult);
   });
