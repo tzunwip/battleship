@@ -6,9 +6,9 @@ export default function renderStart() {
   const main = getEmptyMainElement();
   const titleText = "Battleships";
   const descText = "Choose game mode:";
-  const pvpText = "PvP";
-  const computerText = "Computer";
-  const autoText = "Auto vs Computer";
+  const computerText = "1P";
+  const pvpText = "2P";
+  const autoText = "Auto";
 
   const container = document.createElement("div");
   container.className = "start";
@@ -23,17 +23,6 @@ export default function renderStart() {
   gameDesc.className = "start__desc";
   container.appendChild(gameDesc);
 
-  const pvpButton = document.createElement("button");
-  pvpButton.textContent = pvpText;
-  pvpButton.type = "button";
-  pvpButton.className = "start__button";
-  pvpButton.addEventListener("click", () => {
-    GAME.resetGame();
-    GAME.config.mode = "pvp";
-    renderNameInput();
-  });
-  container.appendChild(pvpButton);
-
   const vsComputerButton = document.createElement("button");
   vsComputerButton.textContent = computerText;
   vsComputerButton.type = "button";
@@ -44,6 +33,17 @@ export default function renderStart() {
     renderNameInput();
   });
   container.appendChild(vsComputerButton);
+
+  const pvpButton = document.createElement("button");
+  pvpButton.textContent = pvpText;
+  pvpButton.type = "button";
+  pvpButton.className = "start__button";
+  pvpButton.addEventListener("click", () => {
+    GAME.resetGame();
+    GAME.config.mode = "pvp";
+    renderNameInput();
+  });
+  container.appendChild(pvpButton);
 
   const autoButton = document.createElement("button");
   autoButton.textContent = autoText;
