@@ -201,9 +201,8 @@ function rotateShip(shipEle) {
   );
 
   if (isValidPlacement) {
-    const oldNodes = getTargetGrids(headX, headY, shipLength, oldOrientation);
     toggleRotateShipStyles(shipEle);
-    updateShipGrids(shipId, oldNodes, newNodes);
+    updateShipGrids(shipId, newNodes);
   }
 }
 
