@@ -39,7 +39,6 @@ export function renderPlaceShips() {
   renderRandomizedBoard(randomizeShips(SHIPS_CONFIG, GRID_SIZE));
 
   renderSubmitButton(container);
-  renderResetButton(container);
   renderRandomizeButton(container);
 }
 
@@ -258,27 +257,11 @@ function renderSubmitButton(parent) {
 
     GAME.placeShips(ships);
 
-    if (nextPlayer.isComputer) {
-      const randomizedShips = randomizeShips(SHIPS_CONFIG, GRID_SIZE);
-      GAME.placeShips(randomizedShips);
-    }
-
     if (GAME.isInputComplete(SHIPS_CONFIG)) {
       renderSelectPlayer();
     } else {
       renderPassDeviceSplash(nextPlayer.playerName, renderPlaceShips);
     }
-  });
-}
-
-function renderResetButton(parent) {
-  const resetButton = document.createElement("button");
-  resetButton.textContent = "Reset";
-  resetButton.type = "button";
-  resetButton.className = "place-ships__button place-ships__button--reset";
-  parent.appendChild(resetButton);
-  resetButton.addEventListener("click", () => {
-    resetPlaceBoard();
   });
 }
 
