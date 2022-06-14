@@ -152,28 +152,41 @@ function rotateShip(shipEle) {
   const shipLength = shipDataset.length;
   const oldOrientation = shipDataset.orientation;
   const newOrientation = oldOrientation == "x" ? "y" : "x";
-  const newNodes = getTargetGrids(headX, headY, shipLength, newOrientation);
+  const newNodes = findNewRotateNodes(headX, headY, shipId, newOrientation, shipLength, GRID_SIZE);
 
-  const isValidPlacement = checkValidShipPlacement(
-    shipId,
-    headX,
-    headY,
-    shipLength,
-    newOrientation,
-    GRID_SIZE,
-    newNodes,
-  );
-
-  if (isValidPlacement) {
-    toggleRotateShipStyles(shipEle);
-    updateShipGrids(shipId, newNodes);
+  if (newNodes) {
+    toggleRotateShipStyles(shipEle, newNodes.targetNodes);
+    updateShipGrids(shipId, newNodes.targetNodes);
   }
 }
 
-function toggleRotateShipStyles(shipEle) {
+function findNewRotateNodes(headX, headY, shipId, newOrientation, shipLength, gridSize) {
+  for (let i = 0; i < shipLength; i++) {
+    for (let j = 0; j < shipLength; j++) {
+      const newX = newOrientation == "x" ? Number(headX) - i : Number(headX) + j;
+      const newY = newOrientation == "y" ? Number(headY) - i : Number(headY) + j;
+
+      const isInbounds = checkInbounds(newX, newY, shipLength, newOrientation, gridSize);
+      console.log(`x${newX}y${newY} isInbound: ${isInbounds}`);
+
+      if (isInbounds) {
+        const targetNodes = getTargetGrids(newX, newY, shipLength, newOrientation);
+        const isOccupied = checkOccupied(targetNodes, shipId);
+        if (!isOccupied) {
+          console.log(targetNodes, `isOccupied: ${isOccupied}`);
+          return { newX, newY, targetNodes };
+        }
+      }
+    }
+  }
+}
+
+function toggleRotateShipStyles(shipEle, newNodes) {
   shipEle.classList.toggle("grid-row");
   shipEle.classList.toggle("grid-column");
   shipEle.dataset.orientation = shipEle.dataset.orientation == "x" ? "y" : "x";
+
+  newNodes[0].appendChild(shipEle);
 }
 
 function renderPlaceShipGrids(board) {
