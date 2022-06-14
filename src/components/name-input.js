@@ -15,7 +15,7 @@ export function renderNameInput() {
   };
 
   const form = document.createElement("form");
-  form.className = "name-input";
+  form.className = "name-input nes-container";
   main.appendChild(form);
 
   const title = document.createElement("h4");
@@ -32,7 +32,7 @@ export function renderNameInput() {
   const button = document.createElement("button");
   button.textContent = buttonText;
   button.type = "submit";
-  button.className = "name-input__button";
+  button.className = "name-input__button nes-btn is-success";
   form.appendChild(button);
 
   // add event listener submit
@@ -64,20 +64,23 @@ function renderInputFields(parent, index, placeholder) {
   nameInput.placeholder = placeholder;
   nameInput.required = "true";
   nameInput.type = "text";
-  nameInput.className = "name-input__text-input";
+  nameInput.autocomplete = "off";
+  nameInput.className = "name-input__text-input nes-input";
   fragment.appendChild(nameInput);
 
   const autoLabel = document.createElement("label");
-  autoLabel.htmlFor = `auto${index}`;
   autoLabel.className = "name-input__auto-label";
-  autoLabel.textContent = "Auto";
   fragment.appendChild(autoLabel);
 
   const autoCheckbox = document.createElement("input");
   autoCheckbox.name = `auto${index}`;
   autoCheckbox.type = "checkbox";
-  autoCheckbox.className = "name-input__auto-input";
-  fragment.appendChild(autoCheckbox);
+  autoCheckbox.className = "nes-checkbox";
+  autoLabel.appendChild(autoCheckbox);
+
+  const autoSpan = document.createElement("span");
+  autoSpan.textContent = "Auto";
+  autoLabel.appendChild(autoSpan);
 
   parent.appendChild(fragment);
 }

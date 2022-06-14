@@ -18,10 +18,10 @@ export function renderPassDeviceSplash(nextPlayerName, callbackFn) {
   const textDescTwo = "Click to continue";
 
   const splash = document.createElement("div");
-  splash.setAttribute("class", "pass-device");
+  splash.setAttribute("class", "pass-device nes-container is-rounded");
   main.appendChild(splash);
 
-  const descOne = document.createElement("h4");
+  const descOne = document.createElement("h3");
   descOne.textContent = textDescOne;
   splash.appendChild(descOne);
 
@@ -53,4 +53,18 @@ export function getRandomBinary() {
 
 export function getRandomNumber(max) {
   return Math.round(Math.random() * max);
+}
+
+export function renderGithubIcon() {
+  const body = document.querySelector("body");
+
+  const container = document.createElement("a");
+  container.href = "https://github.com/tzunwip/battleship";
+  container.target = "_blank";
+  container.classList = "icon__github";
+  body.appendChild(container);
+
+  const icon = document.createElement("i");
+  icon.classList = "nes-icon github";
+  container.appendChild(icon);
 }

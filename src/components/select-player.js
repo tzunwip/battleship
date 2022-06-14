@@ -10,7 +10,7 @@ export function renderSelectPlayer() {
   const randomButtonText = "Random";
 
   const container = document.createElement("div");
-  container.setAttribute("class", "select-player");
+  container.setAttribute("class", "select-player nes-container");
   main.appendChild(container);
 
   const title = document.createElement("h4");
@@ -19,19 +19,19 @@ export function renderSelectPlayer() {
   container.appendChild(title);
 
   const playerOneButton = document.createElement("button");
-  playerOneButton.setAttribute("class", "select-player__button");
+  playerOneButton.setAttribute("class", "select-player__button nes-btn");
   playerOneButton.type = "button";
   playerOneButton.textContent = playerOneName;
   container.appendChild(playerOneButton);
 
   const playerTwoButton = document.createElement("button");
-  playerTwoButton.setAttribute("class", "select-player__button");
+  playerTwoButton.setAttribute("class", "select-player__button nes-btn");
   playerTwoButton.type = "button";
   playerTwoButton.textContent = playerTwoName;
   container.appendChild(playerTwoButton);
 
   const randomButton = document.createElement("button");
-  randomButton.setAttribute("class", "select-player__button");
+  randomButton.setAttribute("class", "select-player__button nes-btn is-warning");
   randomButton.type = "button";
   randomButton.textContent = randomButtonText;
   container.appendChild(randomButton);

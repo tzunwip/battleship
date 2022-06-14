@@ -15,10 +15,10 @@ export function renderPlaceShips() {
   const descTextOne = "Drag and drop, double click to rotate";
 
   const container = document.createElement("div");
-  container.className = "place-ships";
+  container.className = "place-ships nes-container";
   main.appendChild(container);
 
-  const title = document.createElement("h5");
+  const title = document.createElement("h3");
   title.textContent = titleText;
   title.className = "place-ships__title";
   container.appendChild(title);
@@ -29,7 +29,7 @@ export function renderPlaceShips() {
   container.appendChild(board);
 
   const desc = document.createElement("div");
-  desc.className = "place-ships__desc";
+  desc.className = "place-ships__desc nes-text is-error";
   container.appendChild(desc);
 
   const descOne = document.createElement("h6");
@@ -249,7 +249,7 @@ function renderSubmitButton(parent) {
   const submitButton = document.createElement("button");
   submitButton.textContent = "Continue";
   submitButton.type = "button";
-  submitButton.className = "place-ships__button place-ships__button--submit";
+  submitButton.className = "place-ships__button place-ships__button--submit nes-btn is-success";
   parent.appendChild(submitButton);
   submitButton.addEventListener("click", () => {
     const ships = getPlacedShips(SHIPS_CONFIG);
@@ -274,7 +274,8 @@ function renderRandomizeButton(parent) {
   const randomizeButton = document.createElement("button");
   randomizeButton.textContent = "Randomize";
   randomizeButton.type = "button";
-  randomizeButton.className = "place-ships__button place-ships__button--randomize";
+  randomizeButton.className =
+    "place-ships__button place-ships__button--randomize nes-btn is-warning";
   parent.appendChild(randomizeButton);
   randomizeButton.addEventListener("click", () => {
     const randomizedShips = randomizeShips(SHIPS_CONFIG, GRID_SIZE);

@@ -1,5 +1,5 @@
 import { GAME } from "../state/state";
-import { getEmptyMainElement } from "./utility";
+import { getEmptyMainElement, renderGithubIcon } from "./utility";
 import { renderNameInput } from "./name-input";
 
 export default function renderStart() {
@@ -10,7 +10,7 @@ export default function renderStart() {
   const pvpText = "2 Players";
 
   const container = document.createElement("div");
-  container.className = "start";
+  container.className = "start nes-container";
 
   const gameTitle = document.createElement("h1");
   gameTitle.textContent = titleText;
@@ -25,7 +25,7 @@ export default function renderStart() {
   const vsComputerButton = document.createElement("button");
   vsComputerButton.textContent = computerText;
   vsComputerButton.type = "button";
-  vsComputerButton.className = "start__button";
+  vsComputerButton.className = "start__button nes-btn";
   vsComputerButton.addEventListener("click", () => {
     GAME.resetGame();
     GAME.config.mode = "computer";
@@ -36,7 +36,7 @@ export default function renderStart() {
   const pvpButton = document.createElement("button");
   pvpButton.textContent = pvpText;
   pvpButton.type = "button";
-  pvpButton.className = "start__button";
+  pvpButton.className = "start__button nes-btn";
   pvpButton.addEventListener("click", () => {
     GAME.resetGame();
     GAME.config.mode = "pvp";

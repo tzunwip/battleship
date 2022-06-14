@@ -25,7 +25,7 @@ function renderIndividualGameDisplay(parent, playerId) {
   const { playerName } = playerData;
 
   const playerContainer = document.createElement("div");
-  playerContainer.setAttribute("class", "game-display__player");
+  playerContainer.setAttribute("class", "game-display__player nes-container");
   playerContainer.setAttribute("id", `player${playerId}`);
   parent.appendChild(playerContainer);
 
@@ -94,14 +94,14 @@ function setGridHitStyle(grid) {
   const faSpan = document.createElement("i");
   grid.classList.add("hit");
   grid.appendChild(faSpan);
-  faSpan.setAttribute("class", "fas fa-skull-crossbones");
+  faSpan.setAttribute("class", "nes-icon close");
 }
 
 function setGridMissStyle(grid) {
   const faSpan = document.createElement("i");
   grid.classList.add("miss");
   grid.appendChild(faSpan);
-  faSpan.setAttribute("class", "fas fa-circle");
+  faSpan.setAttribute("class", "fas fa-square-full");
 }
 
 function setSunkShipStyle(grid, attackResult) {
@@ -140,7 +140,7 @@ function renderGameWonPopup(winningPlayerName) {
   body.appendChild(mask);
 
   const container = document.createElement("div");
-  container.setAttribute("class", "win-popup");
+  container.setAttribute("class", "win-popup nes-container is-rounded");
   mask.appendChild(container);
 
   const textOne = document.createElement("h3");
