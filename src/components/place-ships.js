@@ -143,19 +143,6 @@ function renderShip(parent, { id, shipLength, orientation = "y" }) {
   }
 }
 
-function renderNextStagingElement(shipsConfig) {
-  const stagingEle = document.querySelector(".place-ships__staging");
-  if (stagingEle.hasChildNodes()) return;
-
-  const nextShip = shipsConfig.find((ship) => {
-    const shipEle = document.querySelector(`#${ship.id}`);
-    return shipEle == null;
-  });
-
-  if (nextShip) renderShip(stagingEle, nextShip);
-  else renderSubmitButton(stagingEle);
-}
-
 function rotateShip(shipEle) {
   const shipDataset = shipEle.dataset;
   const gridDataset = shipEle.parentElement.dataset;
@@ -256,6 +243,11 @@ function renderSubmitButton(parent) {
     const nextPlayer = GAME.getOpponent();
 
     GAME.placeShips(ships);
+
+    if (nextPlayer.playerName == "Computer" && nextPlayer.isComputer) {
+      const randomizedShips = randomizeShips(SHIPS_CONFIG, GRID_SIZE);
+      GAME.placeShips(randomizedShips);
+    }
 
     if (GAME.isInputComplete(SHIPS_CONFIG)) {
       renderSelectPlayer();
