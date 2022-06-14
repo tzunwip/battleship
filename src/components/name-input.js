@@ -41,7 +41,7 @@ export function renderNameInput() {
 
   const button = document.createElement("button");
   button.textContent = buttonText;
-  button.type = "button";
+  button.type = "submit";
   button.className = "name-input__button";
   button.addEventListener("click", (e) => {
     e.preventDefault();
