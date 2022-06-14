@@ -6,63 +6,78 @@ export function renderNameInput() {
   const main = getEmptyMainElement();
   const isPvp = GAME.config.mode == "pvp" ? true : false;
   const titleText = `Enter your name${isPvp ? "s" : ""}:`;
-  const inputOneText = isPvp ? "Player One" : "Player";
-  const inputTwoText = "Player Two";
+  const inputOnePlaceholder = isPvp ? "Player One" : "Player";
+  const inputTwoPlaceholder = "Player Two";
   const buttonText = "Continue";
   const computerInput = {
     name: "Computer",
     isComputer: true,
   };
 
-  const container = document.createElement("form");
-  container.className = "name-input";
-  main.appendChild(container);
+  const form = document.createElement("form");
+  form.className = "name-input";
+  main.appendChild(form);
 
   const title = document.createElement("h4");
   title.textContent = titleText;
   title.className = "name-input__title";
-  container.appendChild(title);
+  form.appendChild(title);
 
-  const inputOne = document.createElement("input");
-  inputOne.placeholder = inputOneText;
-  inputOne.required = "true";
-  inputOne.type = "text";
-  inputOne.className = "name-input__text-input";
-  container.appendChild(inputOne);
+  renderInputFields(form, 0, inputOnePlaceholder);
 
   if (isPvp) {
-    const inputTwo = document.createElement("input");
-    inputTwo.placeholder = inputTwoText;
-    inputTwo.required = "true";
-    inputTwo.type = "text";
-    inputTwo.className = "name-input__text-input";
-    container.appendChild(inputTwo);
+    renderInputFields(form, 1, inputTwoPlaceholder);
   }
 
   const button = document.createElement("button");
   button.textContent = buttonText;
   button.type = "submit";
   button.className = "name-input__button";
-  button.addEventListener("click", (e) => {
+  form.appendChild(button);
+
+  // add event listener submit
+  form.addEventListener("submit", (e) => {
     e.preventDefault();
-    if (container.reportValidity()) {
-      const inputNodes = document.querySelectorAll("input");
-      const gameMode = GAME.config.mode;
 
-      inputNodes.forEach((ele) => {
-        const newPlayerInput = {
-          name: ele.value,
-          isComputer: gameMode == "auto" ? true : false,
-        };
-        GAME.createPlayer(newPlayerInput);
-      });
+    const inputElements = e.target.elements;
 
-      if (inputNodes.length == 1) {
-        GAME.createPlayer(computerInput);
-      }
+    [0, 1].forEach((index) => {
+      const newPlayerInput = inputElements[`name${index}`]
+        ? {
+            name: inputElements[`name${index}`].value,
+            isComputer: inputElements[`auto${index}`].checked,
+          }
+        : { name: "Computer", isComputer: true };
 
-      renderPlaceShips();
-    }
+      GAME.createPlayer(newPlayerInput);
+    });
+
+    renderPlaceShips();
   });
-  container.appendChild(button);
+}
+
+function renderInputFields(parent, index, placeholder) {
+  const fragment = document.createDocumentFragment();
+
+  const nameInput = document.createElement("input");
+  nameInput.name = `name${index}`;
+  nameInput.placeholder = placeholder;
+  nameInput.required = "true";
+  nameInput.type = "text";
+  nameInput.className = "name-input__text-input";
+  fragment.appendChild(nameInput);
+
+  const autoLabel = document.createElement("label");
+  autoLabel.htmlFor = `auto${index}`;
+  autoLabel.className = "name-input__auto-label";
+  autoLabel.textContent = "Auto";
+  fragment.appendChild(autoLabel);
+
+  const autoCheckbox = document.createElement("input");
+  autoCheckbox.name = `auto${index}`;
+  autoCheckbox.type = "checkbox";
+  autoCheckbox.className = "name-input__auto-input";
+  fragment.appendChild(autoCheckbox);
+
+  parent.appendChild(fragment);
 }

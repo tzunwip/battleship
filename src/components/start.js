@@ -4,11 +4,10 @@ import { renderNameInput } from "./name-input";
 
 export default function renderStart() {
   const main = getEmptyMainElement();
-  const titleText = "Battleships";
-  const descText = "Choose game mode:";
-  const computerText = "1P";
-  const pvpText = "2P";
-  const autoText = "Auto";
+  const titleText = "Battleship";
+  const descText = "Start Game";
+  const computerText = "1 Player";
+  const pvpText = "2 Players";
 
   const container = document.createElement("div");
   container.className = "start";
@@ -44,17 +43,6 @@ export default function renderStart() {
     renderNameInput();
   });
   container.appendChild(pvpButton);
-
-  const autoButton = document.createElement("button");
-  autoButton.textContent = autoText;
-  autoButton.type = "button";
-  autoButton.className = "start__button";
-  autoButton.addEventListener("click", () => {
-    GAME.resetGame();
-    GAME.config.mode = "auto";
-    renderNameInput();
-  });
-  container.appendChild(autoButton);
 
   main.appendChild(container);
 }

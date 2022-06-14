@@ -81,6 +81,8 @@ export default class Game {
       this.activePlayer = firstMover;
     }
 
+    if (this.checkAutoMode()) this.config.mode = "auto";
+
     if (this.players[this.activePlayer].isComputer) {
       this.makeComputerAttack();
     }
@@ -126,5 +128,9 @@ export default class Game {
     this.players = [];
     this.activePlayer = 0;
     this.hasStarted = false;
+  }
+
+  checkAutoMode() {
+    return this.players[0].isComputer && this.players[1].isComputer;
   }
 }
