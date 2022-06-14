@@ -11,9 +11,8 @@ import { renderSelectPlayer } from "./select-player";
 export function renderPlaceShips() {
   const main = getEmptyMainElement();
   const activePlayerName = GAME.getMyName();
-  const titleText = `${activePlayerName}, place your ships`;
-  const descTextOne = "Drag and drop";
-  const descTextTwo = "Double click to rotate";
+  const titleText = `${activePlayerName}'s Ships`;
+  const descTextOne = "Drag and drop, double click to rotate";
 
   const container = document.createElement("div");
   container.className = "place-ships";
@@ -37,26 +36,10 @@ export function renderPlaceShips() {
   descOne.textContent = descTextOne;
   desc.appendChild(descOne);
 
-  const descTwo = document.createElement("h6");
-  descTwo.textContent = descTextTwo;
-  desc.appendChild(descTwo);
+  renderRandomizedBoard(randomizeShips(SHIPS_CONFIG, GRID_SIZE));
 
-  const staging = document.createElement("div");
-  staging.className = "place-ships__staging";
-  staging.id = "staging";
-  container.appendChild(staging);
-
-  renderNextStagingElement(SHIPS_CONFIG);
-
-  const resetButton = document.createElement("button");
-  resetButton.textContent = "Reset";
-  resetButton.type = "button";
-  resetButton.className = "place-ships__button place-ships__button--reset";
-  container.appendChild(resetButton);
-  resetButton.addEventListener("click", () => {
-    resetPlaceBoard();
-  });
-
+  renderSubmitButton(container);
+  renderResetButton(container);
   renderRandomizeButton(container);
 }
 
@@ -175,11 +158,6 @@ function renderNextStagingElement(shipsConfig) {
 }
 
 function rotateShip(shipEle) {
-  if (shipEle.parentElement.id == "staging") {
-    toggleRotateShipStyles(shipEle);
-    return;
-  }
-
   const shipDataset = shipEle.dataset;
   const gridDataset = shipEle.parentElement.dataset;
   const shipId = shipEle.id;
@@ -255,8 +233,6 @@ function renderPlaceShipGrids(board) {
         headGrid.appendChild(targetShip);
 
         e.dataTransfer.clearData();
-
-        renderNextStagingElement(SHIPS_CONFIG);
       });
     }
   }
@@ -264,21 +240,17 @@ function renderPlaceShipGrids(board) {
 
 function resetPlaceBoard() {
   const board = document.querySelector(".place-ships__board");
-  const staging = document.querySelector(".place-ships__staging");
 
-  [board, staging].forEach((node) => {
-    clearElement(node);
-  });
+  clearElement(board);
 
   renderPlaceShipGrids(board);
-  renderNextStagingElement(SHIPS_CONFIG);
 }
 
 function renderSubmitButton(parent) {
   const submitButton = document.createElement("button");
-  submitButton.textContent = "Submit";
+  submitButton.textContent = "Continue";
   submitButton.type = "button";
-  submitButton.className = "place-ships__button";
+  submitButton.className = "place-ships__button place-ships__button--submit";
   parent.appendChild(submitButton);
   submitButton.addEventListener("click", () => {
     const ships = getPlacedShips(SHIPS_CONFIG);
@@ -296,6 +268,17 @@ function renderSubmitButton(parent) {
     } else {
       renderPassDeviceSplash(nextPlayer.playerName, renderPlaceShips);
     }
+  });
+}
+
+function renderResetButton(parent) {
+  const resetButton = document.createElement("button");
+  resetButton.textContent = "Reset";
+  resetButton.type = "button";
+  resetButton.className = "place-ships__button place-ships__button--reset";
+  parent.appendChild(resetButton);
+  resetButton.addEventListener("click", () => {
+    resetPlaceBoard();
   });
 }
 
@@ -336,9 +319,6 @@ function renderRandomizedBoard(randomizedShips) {
     renderShip(headGrid, ship);
     updateShipGrids(ship.id, targetGrids);
   });
-
-  clearElement(document.querySelector("#staging"));
-  renderNextStagingElement(SHIPS_CONFIG);
 }
 
 function randomizeShips(shipsConfig, boardSize) {
