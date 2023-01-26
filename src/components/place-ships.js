@@ -202,7 +202,6 @@ function findNewRotateNodes(
         newOrientation,
         gridSize
       );
-      console.log(`x${newX}y${newY} isInbound: ${isInbounds}`);
 
       if (isInbounds) {
         const targetNodes = getTargetGrids(
@@ -213,7 +212,6 @@ function findNewRotateNodes(
         );
         const isOccupied = checkOccupied(targetNodes, shipId);
         if (!isOccupied) {
-          console.log(targetNodes, `isOccupied: ${isOccupied}`);
           return { newX, newY, targetNodes };
         }
       }
