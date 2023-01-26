@@ -53,8 +53,10 @@ function renderGameDisplayGrids(parent, playerData) {
       grid.setAttribute("class", `game-display__grid ${coordinate}`);
       parent.appendChild(grid);
 
-      if (!isOpponentComputer) setGridEventListener({ grid, playerId, coordinate });
-      if (isOpponentComputer && coordinate in boardDatabase) setRevealShipStyle(grid);
+      if (!isOpponentComputer)
+        setGridEventListener({ grid, playerId, coordinate });
+      if (isOpponentComputer && coordinate in boardDatabase)
+        setRevealShipStyle(grid);
     }
   }
 }
@@ -62,7 +64,10 @@ function renderGameDisplayGrids(parent, playerData) {
 function setGameDisplayStyles() {
   const activePlayerId = GAME.activePlayer;
   const inactivePlayerId = activePlayerId ? 0 : 1;
-  const playerElements = [document.querySelector("#player0"), document.querySelector("#player1")];
+  const playerElements = [
+    document.querySelector("#player0"),
+    document.querySelector("#player1"),
+  ];
   const isAutoGameMode = GAME.config.mode == "auto";
 
   // only opponent's board should stand out
@@ -126,7 +131,9 @@ export function renderComputerAttack(attackResult) {
 
   const { receivingPlayerId, x, y } = attackResult;
 
-  const grid = document.querySelector(`#player${receivingPlayerId} .x${x}y${y}`);
+  const grid = document.querySelector(
+    `#player${receivingPlayerId} .x${x}y${y}`
+  );
 
   setGridStyle(grid, attackResult);
   setGameDisplayStyles();
@@ -161,7 +168,10 @@ function renderGameWonPopup(winningPlayerName) {
 
 function setGridEventListener({ grid, playerId, coordinate }) {
   grid.addEventListener("click", () => {
-    const attackResult = GAME.makeAttack({ coordinate, receivingPlayerId: playerId });
+    const attackResult = GAME.makeAttack({
+      coordinate,
+      receivingPlayerId: playerId,
+    });
     setGameDisplayStyles();
     setGridStyle(grid, attackResult);
   });

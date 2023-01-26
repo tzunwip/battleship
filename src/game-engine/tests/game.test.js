@@ -36,11 +36,19 @@ test("game to completion", () => {
 
   game.startGame(0);
 
-  expect(game.makeAttack({ coordinate: "x1y1", playerId: 1 })).toEqual({ result: "hit" });
-  expect(game.makeAttack({ coordinate: "x1y2", playerId: 0 })).toEqual({ result: "miss" });
+  expect(game.makeAttack({ coordinate: "x1y1", playerId: 1 })).toEqual({
+    result: "hit",
+  });
+  expect(game.makeAttack({ coordinate: "x1y2", playerId: 0 })).toEqual({
+    result: "miss",
+  });
 
-  expect(game.makeAttack({ coordinate: "x2y1", playerId: 1 })).toEqual({ result: "hit" });
-  expect(game.makeAttack({ coordinate: "x2y1", playerId: 0 })).toEqual({ result: "hit" });
+  expect(game.makeAttack({ coordinate: "x2y1", playerId: 1 })).toEqual({
+    result: "hit",
+  });
+  expect(game.makeAttack({ coordinate: "x2y1", playerId: 0 })).toEqual({
+    result: "hit",
+  });
 
   expect(game.makeAttack({ coordinate: "x3y1", playerId: 1 })).toEqual({
     result: "won",
@@ -58,11 +66,19 @@ test("game to completion", () => {
 
   game.startGame(0);
 
-  expect(game.makeAttack({ coordinate: "x1y1", playerId: 1 })).toEqual({ result: "hit" });
-  expect(game.makeAttack({ coordinate: "x1y2", playerId: 0 })).toEqual({ result: "miss" });
+  expect(game.makeAttack({ coordinate: "x1y1", playerId: 1 })).toEqual({
+    result: "hit",
+  });
+  expect(game.makeAttack({ coordinate: "x1y2", playerId: 0 })).toEqual({
+    result: "miss",
+  });
 
-  expect(game.makeAttack({ coordinate: "x2y1", playerId: 1 })).toEqual({ result: "hit" });
-  expect(game.makeAttack({ coordinate: "x2y1", playerId: 0 })).toEqual({ result: "hit" });
+  expect(game.makeAttack({ coordinate: "x2y1", playerId: 1 })).toEqual({
+    result: "hit",
+  });
+  expect(game.makeAttack({ coordinate: "x2y1", playerId: 0 })).toEqual({
+    result: "hit",
+  });
 
   expect(game.makeAttack({ coordinate: "x3y1", playerId: 1 })).toEqual({
     result: "won",

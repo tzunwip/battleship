@@ -114,7 +114,11 @@ export default class Game {
 
     // check winning condition
     if (attackResult.result == "sunk" && hasOpponentLost) {
-      return { result: "won", winningPlayer: this.getMyName(), ship: attackResult.ship };
+      return {
+        result: "won",
+        winningPlayer: this.getMyName(),
+        ship: attackResult.ship,
+      };
     }
 
     this.advanceTurn();

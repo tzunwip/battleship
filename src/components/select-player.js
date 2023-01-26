@@ -31,7 +31,10 @@ export function renderSelectPlayer() {
   container.appendChild(playerTwoButton);
 
   const randomButton = document.createElement("button");
-  randomButton.setAttribute("class", "select-player__button nes-btn is-warning");
+  randomButton.setAttribute(
+    "class",
+    "select-player__button nes-btn is-warning"
+  );
   randomButton.type = "button";
   randomButton.textContent = randomButtonText;
   container.appendChild(randomButton);

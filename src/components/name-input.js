@@ -9,10 +9,6 @@ export function renderNameInput() {
   const inputOnePlaceholder = isPvp ? "Player One" : "Player";
   const inputTwoPlaceholder = "Player Two";
   const buttonText = "Continue";
-  const computerInput = {
-    name: "Computer",
-    isComputer: true,
-  };
 
   const form = document.createElement("form");
   form.className = "name-input nes-container";

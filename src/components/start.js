@@ -1,5 +1,5 @@
 import { GAME } from "../state/state";
-import { getEmptyMainElement, renderGithubIcon } from "./utility";
+import { getEmptyMainElement } from "./utility";
 import { renderNameInput } from "./name-input";
 
 export default function renderStart() {

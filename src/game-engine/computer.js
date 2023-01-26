@@ -32,7 +32,10 @@ export default class Computer {
 
   getRandomAttackCoordinate() {
     const randomNumber = getRandomNumber(this.attackPattern.length - 1);
-    return { ...this.attackPattern[randomNumber], attackPatternIndex: randomNumber };
+    return {
+      ...this.attackPattern[randomNumber],
+      attackPatternIndex: randomNumber,
+    };
   }
 
   getAttackString(attackCoordinates) {
@@ -43,7 +46,10 @@ export default class Computer {
     const receivingPlayerId = this.playerId ? 0 : 1;
     const attackCoordinate = this.getAttackCoordinate();
     const coordinate = this.getAttackString(attackCoordinate);
-    const attackResult = this.game.makeAttack({ coordinate, receivingPlayerId });
+    const attackResult = this.game.makeAttack({
+      coordinate,
+      receivingPlayerId,
+    });
 
     if (attackResult?.result !== "invalid") {
       this.updateAttackHistory();
@@ -85,22 +91,28 @@ export default class Computer {
     this.purgeCoordinateFromAttackPattern(attackCoordinate);
 
     switch (attackResult.result) {
-      case "hit":
-        const nextAttack = this.generateAttackInDirection(attackCoordinate, GRID_SIZE);
+      case "hit": {
+        const nextAttack = this.generateAttackInDirection(
+          attackCoordinate,
+          GRID_SIZE
+        );
         if (nextAttack) this.attackQueue.unshift(nextAttack);
         break;
-      case "sunk":
+      }
+      case "sunk": {
         this.resetAttackQueue();
 
         const unsunkHit = this.searchForUnsunkHit(this.attackHistory);
         if (unsunkHit) this.generateScoutAttackQueue(unsunkHit, GRID_SIZE);
         break;
+      }
     }
   }
 
   updateAttackHistory() {
     const opponentPlayerId = this.playerId ? 0 : 1;
-    this.attackHistory = this.game.getPublicBoards()[opponentPlayerId].publicBoard;
+    this.attackHistory =
+      this.game.getPublicBoards()[opponentPlayerId].publicBoard;
   }
 
   purgeCoordinateFromAttackPattern(attackCoordinate) {
@@ -126,7 +138,10 @@ export default class Computer {
     const queue = [];
 
     directions.forEach((direction) => {
-      const obj = this.generateAttackInDirection({ ...attackCoordinate, direction }, gridSize);
+      const obj = this.generateAttackInDirection(
+        { ...attackCoordinate, direction },
+        gridSize
+      );
       if (obj) {
         return queue.push(obj);
       }
@@ -138,35 +153,45 @@ export default class Computer {
   generateAttackInDirection({ x, y, direction }, gridSize) {
     switch (direction) {
       // conditionals to check within bounds && not attacked before
-      case "n":
+      case "n": {
         const n = { x, y: y - 1, direction };
-        if (n.y >= 0 && !(this.getAttackString(n) in this.attackHistory)) return n;
+        if (n.y >= 0 && !(this.getAttackString(n) in this.attackHistory))
+          return n;
         break;
-
-      case "s":
+      }
+      case "s": {
         const s = { x, y: y + 1, direction };
-        if (s.y < gridSize && !(this.getAttackString(s) in this.attackHistory)) return s;
+        if (s.y < gridSize && !(this.getAttackString(s) in this.attackHistory))
+          return s;
         break;
-
-      case "w":
+      }
+      case "w": {
         const w = { x: x - 1, y, direction };
-        if (w.x >= 0 && !(this.getAttackString(w) in this.attackHistory)) return w;
+        if (w.x >= 0 && !(this.getAttackString(w) in this.attackHistory))
+          return w;
         break;
-
-      case "e":
+      }
+      case "e": {
         const e = { x: x + 1, y, direction };
-        if (e.x < gridSize && !(this.getAttackString(e) in this.attackHistory)) return e;
+        if (e.x < gridSize && !(this.getAttackString(e) in this.attackHistory))
+          return e;
         break;
+      }
     }
   }
 
   searchForUnsunkHit(attackHistory) {
     const coordinateString = Object.keys(attackHistory).find((coordinate) => {
-      return attackHistory[coordinate]?.hasShip && !attackHistory[coordinate]?.isSunk;
+      return (
+        attackHistory[coordinate]?.hasShip && !attackHistory[coordinate]?.isSunk
+      );
     });
 
     if (coordinateString)
-      return { x: Number(coordinateString.charAt(1)), y: Number(coordinateString.charAt(3)) };
+      return {
+        x: Number(coordinateString.charAt(1)),
+        y: Number(coordinateString.charAt(3)),
+      };
   }
 
   resetAttackQueue() {
