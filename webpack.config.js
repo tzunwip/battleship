@@ -3,7 +3,7 @@ const TerserPlugin = require("terser-webpack-plugin");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
-const FaviconsWebpackPlugin = require("favicons-webpack-plugin");
+const ImageMinimizerPlugin = require("image-minimizer-webpack-plugin");
 
 module.exports = {
   mode: "production",
@@ -23,11 +23,26 @@ module.exports = {
         test: /.s?css$/,
         use: [MiniCssExtractPlugin.loader, "css-loader"],
       },
+      {
+        test: /\.(png|svg|jpg|jpeg|gif)$/i,
+        type: 'asset/resource',
+      },
     ],
   },
   optimization: {
     minimize: true,
-    minimizer: [new TerserPlugin(), new CssMinimizerPlugin()],
+    minimizer: [new TerserPlugin(), new CssMinimizerPlugin(), new ImageMinimizerPlugin({
+      minimizer: {
+        implementation: ImageMinimizerPlugin.imageminMinify,
+        options: {
+          // Lossless optimization with custom option
+          // Feel free to experiment with options for better result for you
+          plugins: [
+            ["optipng", { optimizationLevel: 5 }],
+          ],
+        },
+      },
+    }),],
     splitChunks: {
       chunks: "all",
     },
@@ -39,6 +54,6 @@ module.exports = {
     new MiniCssExtractPlugin({
       filename: "./css/[name].css",
     }),
-    new FaviconsWebpackPlugin("./src/img/icons8-sailboat-48.png"),
+    // new FaviconsWebpackPlugin("./src/img/icons8-sailboat-48.png"),
   ],
 };
