@@ -4,12 +4,11 @@ module.exports = {
     browser: true,
     es2021: true,
     jest: true,
-    cypress: true,
   },
   extends: ["eslint:recommended", "plugin:prettier/recommended"],
   overrides: [
     {
-      files: ["test/**"],
+      files: ["**/*.test.js"],
       plugins: ["jest"],
       extends: ["plugin:jest/recommended"],
       rules: { "jest/prefer-expect-assertions": "off" },
