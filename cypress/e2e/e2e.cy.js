@@ -139,25 +139,30 @@ describe("game e2e", () => {
     cy.findByRole("button", { name: "Computer" }).should("be.visible").click();
 
     // game screen computer first move initial state
-    cy.get(`[id='player0']`).as("playerBoard").should("be.visible");
-    cy.get(`[id='player1']`).as("computerBoard").should("be.visible");
 
-    cy.get("@playerBoard")
-      .should("have.text", `${playerone.name}'s Ships`)
+    cy.get(`[id='player0']`)
+      .as("playerBoard")
       .should("be.visible")
-      .should("have.class", "inactive")
+      .should("have.text", `${playerone.name}'s Ships`)
+      .should("not.have.class", "inactive")
       .within(() => {
-        cy.get(`@${playerone.name}`).then((player) => {
+        cy.get(`@${playerone.name}`).then((player) =>
           player.grids.forEach((coordinate) =>
             cy.get(`.${coordinate}`).should("have.class", "reveal")
-          );
-        });
+          )
+        );
       });
 
-    cy.get("@computerBoard")
-      .should("have.text", "Computer's Ships")
+    cy.get(`[id='player1']`)
+      .as("computerBoard")
       .should("be.visible")
-      .should("not.have.class", "inactive")
-      .within(() => cy.get(".reveal").should("not.exist"));
+      .should("have.text", "Computer's Ships")
+      .should("have.class", "inactive")
+      .within(() => {
+        cy.get(".reveal").should("not.exist");
+      });
+
+    cy.get("@playerBoard").should("not.have.class", "inactive");
+    cy.get("@computerBoard").should("have.class", "inactive");
   });
 });
