@@ -9,7 +9,7 @@ module.exports = {
   mode: "production",
   entry: "./src/index.js",
   output: {
-    filename: "js/[name].bundle.js",
+    filename: "js/[name].[contenthash].js",
     path: path.resolve(__dirname, "dist"),
     assetModuleFilename: "assets/[name][ext]",
     clean: true,
@@ -45,8 +45,12 @@ module.exports = {
         },
       }),
     ],
+    moduleIds: "deterministic",
+    runtimeChunk: "single",
     splitChunks: {
       chunks: "all",
+      minSize: 0,
+      minSizeReduction: 0,
     },
   },
   plugins: [
@@ -56,6 +60,5 @@ module.exports = {
     new MiniCssExtractPlugin({
       filename: "./css/[name].css",
     }),
-    // new FaviconsWebpackPlugin("./src/img/icons8-sailboat-48.png"),
   ],
 };
