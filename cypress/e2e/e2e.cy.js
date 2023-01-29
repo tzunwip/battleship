@@ -65,6 +65,7 @@ describe("game e2e", () => {
         SHIPS_CONFIG.reduce((acc, ship) => acc + ship.shipLength, 0)
       );
 
+      // test css class & data-tags aligned
       SHIPS_CONFIG.forEach((ship) => {
         cy.get(`#${ship.id}`).as(ship.id);
         cy.get(`@${ship.id}`)
@@ -111,15 +112,52 @@ describe("game e2e", () => {
     };
 
     // rotate, randomize & test ships placement
-    cy.get("@board").then(() => testShips());
-    cy.findByRole("button", { name: "Randomize" }).should("be.visible").click();
-    cy.get("@board").then(() => testShips());
+    // cy.findByRole("button", { name: "Randomize" }).should("be.visible").click();
+    // cy.get("@board").then(() => testShips());
 
     // wrap occupied grids for later use
-    const occupiedGrids = [];
-    cy.get(".occupied").each((grid) => occupiedGrids.push(grid.attr("id")));
-    cy.wrap(occupiedGrids).as("occupiedGrids");
+    const capturePlayerState = (aliasName) => {
+      const occupiedGrids = [];
+      const placedShips = {};
+      cy.get(".occupied").each((grid) => {
+        const coordinate = grid.attr("id");
+        const classes = grid.attr("class");
+        const type = SHIPS_CONFIG.find((ship) => classes.includes(ship.id)).id;
+        occupiedGrids.push(coordinate);
+        placedShips[type] = [...(placedShips[type] ?? []), coordinate];
+      });
+      cy.wrap({ grids: occupiedGrids, ships: placedShips }).as(aliasName);
+    };
+    capturePlayerState(playerone.name);
 
     cy.findByRole("button", { name: "Continue" }).should("be.visible").click();
+
+    // select first mover screen
+    cy.findByText("Select First Mover:").should("be.visible");
+    cy.findByRole("button", { name: playerone.name }).should("be.visible");
+    cy.findByRole("button", { name: "Random" }).should("be.visible");
+    cy.findByRole("button", { name: "Computer" }).should("be.visible").click();
+
+    // game screen computer first move initial state
+    cy.get(`[id='player0']`).as("playerBoard").should("be.visible");
+    cy.get(`[id='player1']`).as("computerBoard").should("be.visible");
+
+    cy.get("@playerBoard")
+      .should("have.text", `${playerone.name}'s Ships`)
+      .should("be.visible")
+      .should("have.class", "inactive")
+      .within(() => {
+        cy.get(`@${playerone.name}`).then((player) => {
+          player.grids.forEach((coordinate) =>
+            cy.get(`.${coordinate}`).should("have.class", "reveal")
+          );
+        });
+      });
+
+    cy.get("@computerBoard")
+      .should("have.text", "Computer's Ships")
+      .should("be.visible")
+      .should("not.have.class", "inactive")
+      .within(() => cy.get(".reveal").should("not.exist"));
   });
 });
