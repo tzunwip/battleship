@@ -53,7 +53,7 @@ function getTargetGrids(headX, headY, length, orientation) {
 function checkOccupied(nodes, shipId) {
   const isOccupied = nodes.some((node) => {
     return (
-      node.classList.contains("occupied") && !node.classList.contains(shipId)
+      node?.classList.contains("occupied") && !node.classList.contains(shipId)
     );
   });
 
