@@ -101,10 +101,14 @@ export default class Computer {
       }
       case "sunk": {
         this.resetAttackQueue();
-
-        const unsunkHit = this.searchForUnsunkHit(this.attackHistory);
-        if (unsunkHit) this.generateScoutAttackQueue(unsunkHit, GRID_SIZE);
         break;
+      }
+    }
+
+    if (this.attackQueue.length === 0) {
+      const unsunkHit = this.searchForUnsunkHit(this.attackHistory);
+      if (unsunkHit) {
+        this.generateScoutAttackQueue(unsunkHit, GRID_SIZE);
       }
     }
   }
