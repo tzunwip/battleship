@@ -3,25 +3,30 @@ import { GRID_SIZE, SHIPS_CONFIG } from "../../src/state/state";
 const playerone = {
   name: "player 1",
 };
+function testStartScreen() {
+  cy.get("body")
+    .within(() => {
+      cy.findByText("Battleship").should("be.visible");
+      cy.findByText("Start Game").should("be.visible");
+      cy.findByRole("button", { name: "1 Player" }).should("be.visible");
+      cy.findByRole("button", { name: "2 Players" }).should("be.visible");
+      cy.get('a[href*="github"] > i.github').and("be.visible");
+    })
+    .should("have.css", "background-image")
+    .and("include", "ocean-background.png")
+    .then((url) =>
+      cy.request(url.split('"')[1]).its("status").should("equal", 200)
+    );
+}
 
 describe("game e2e", () => {
   beforeEach(() => cy.visit("index.html"));
 
   it("start screen", () => {
-    cy.get("body")
-      .should("have.css", "background-image")
-      .and("include", "ocean-background.png")
-      .then((url) =>
-        cy.request(url.split('"')[1]).its("status").should("equal", 200)
-      );
-    cy.findByTitle("Battleship").should("be.visible");
-    cy.findByText("Start Game").should("be.visible");
-    cy.findByRole("button", { name: "1 Player" }).should("be.visible");
-    cy.findByRole("button", { name: "2 Players" }).should("be.visible");
-    cy.get('a[href*="github"] > i.github').and("be.visible");
+    testStartScreen();
   });
 
-  it.only("1 player game", () => {
+  it("1 player game", () => {
     cy.get("button").contains("1 Player").click();
 
     // test 1 player name input screen
@@ -162,7 +167,68 @@ describe("game e2e", () => {
         cy.get(".reveal").should("not.exist");
       });
 
-    cy.get("@playerBoard").should("not.have.class", "inactive");
-    cy.get("@computerBoard").should("have.class", "inactive");
+    // after computer first move
+    cy.get("@playerBoard")
+      .should("have.class", "inactive")
+      .find(".miss, .hit, .sunk")
+      .should("have.length", 1);
+
+    // player first move
+    cy.get("@computerBoard")
+      .should("not.have.class", "inactive")
+      .find(".x0y0")
+      .first()
+      .click();
+
+    // after computer second move
+    cy.get("@playerBoard")
+      .should("have.class", "inactive")
+      .find(".miss, .hit, .sunk")
+      .should("have.length", 2);
+
+    // player click occupied grid
+    cy.get("@computerBoard")
+      .should("not.have.class", "inactive")
+      .find(".x0y0")
+      .first()
+      .click();
+
+    cy.get("@computerBoard")
+      .should("not.have.class", "inactive")
+      .find(".miss, .hit, .sunk")
+      .should("have.length", 1);
+
+    function playVsComputer() {
+      cy.get("@computerBoard")
+        .should("not.have.class", "inactive")
+        .find(".game-display__grid:not(.hit, .miss, .sunk)")
+        .first()
+        .click();
+
+      cy.get("body").then((body) => {
+        // tries to find win popup after player move
+        if (body.find(".win-popup").length > 0) return;
+
+        // wait for computer move
+        cy.get("#player0.inactive, .win-popup").then((element) => {
+          // tries to find win popup
+          if (element.hasClass("win-popup")) return;
+
+          // continue playing
+          playVsComputer();
+        });
+      });
+    }
+
+    // recursive until game won
+    playVsComputer();
+
+    // win popup message
+    cy.get(".win-popup")
+      .should("contain.text", "has won!")
+      .and("contain.text", "Click to play again")
+      .click();
+
+    testStartScreen();
   });
 });
