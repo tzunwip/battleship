@@ -11,6 +11,7 @@
     "build": "webpack",
     "build:test": "cross-env NODE_ENV=test webpack --mode=development",
     "cypress:open": "cypress open",
+    "cypress": "cypress run",
     "coverage:text": "nyc report --reporter=text-summary",
     "coverage": "nyc report --reporter=html && open coverage/index.html"
   },
