@@ -1,32 +1,14 @@
 import { GRID_SIZE, SHIPS_CONFIG } from "../../src/state/state";
+import { playerone } from "../support/constants";
 
-const playerone = {
-  name: "player 1",
-};
-function testStartScreen() {
-  cy.get("body")
-    .within(() => {
-      cy.findByText("Battleship").should("be.visible");
-      cy.findByText("Start Game").should("be.visible");
-      cy.findByRole("button", { name: "1 Player" }).should("be.visible");
-      cy.findByRole("button", { name: "2 Players" }).should("be.visible");
-      cy.get('a[href*="github"] > i.github').and("be.visible");
-    })
-    .should("have.css", "background-image")
-    .and("include", "ocean-background.png")
-    .then((url) =>
-      cy.request(url.split('"')[1]).its("status").should("equal", 200)
-    );
-}
-
-describe("game e2e", () => {
+describe("pve mode", () => {
   beforeEach(() => cy.visit("index.html"));
 
   it("start screen", () => {
-    testStartScreen();
+    cy.testStartScreen();
   });
 
-  it("1 player game", () => {
+  it("screens render correctly and game completes", () => {
     cy.get("button").contains("1 Player").click();
 
     // test 1 player name input screen
@@ -229,6 +211,6 @@ describe("game e2e", () => {
       .and("contain.text", "Click to play again")
       .click();
 
-    testStartScreen();
+    cy.testStartScreen();
   });
 });
