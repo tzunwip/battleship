@@ -1,4 +1,4 @@
-import { getEmptyMainElement } from "./utility";
+import { getEmptyMainElement, renderPassDeviceSplash } from "./utility";
 import { GAME } from "../state/state";
 import { renderPlaceShips } from "./place-ships";
 
@@ -48,7 +48,9 @@ export function renderNameInput() {
       GAME.createPlayer(newPlayerInput);
     });
 
-    renderPlaceShips();
+    isPvp
+      ? renderPassDeviceSplash(inputElements[`name0`].value, renderPlaceShips)
+      : renderPlaceShips();
   });
 }
 
