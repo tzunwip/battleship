@@ -1,3 +1,5 @@
+import { SHIPS_CONFIG } from "../../src/state/state";
+
 // ***********************************************
 // This example commands.js shows you how to
 // create various custom commands and overwrite
@@ -40,4 +42,22 @@ Cypress.Commands.add("testStartScreen", () => {
     .then((url) =>
       cy.request(url.split('"')[1]).its("status").should("equal", 200)
     );
+});
+
+Cypress.Commands.add("capturePlayerState", (aliasName) => {
+  const occupiedGrids = [];
+  const placedShips = {};
+  cy.get(".occupied").each((grid) => {
+    const coordinate = grid.attr("id");
+    const classes = grid.attr("class");
+    const type = SHIPS_CONFIG.find((ship) => classes.includes(ship.id)).id;
+    occupiedGrids.push(coordinate);
+    placedShips[type] = [...(placedShips[type] ?? []), coordinate];
+  });
+  cy.wrap({ grids: occupiedGrids, ships: placedShips }).as(aliasName);
+});
+
+Cypress.Commands.add("findPassDeviceSplash", (playerName) => {
+  cy.findByText(`Pass device to ${playerName}`).should("be.visible");
+  cy.findByText("Click to continue").should("be.visible").click();
 });

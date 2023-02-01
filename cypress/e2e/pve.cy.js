@@ -103,19 +103,7 @@ describe("pve mode", () => {
     cy.get("@board").then(() => testShips());
 
     // wrap occupied grids for later use
-    const capturePlayerState = (aliasName) => {
-      const occupiedGrids = [];
-      const placedShips = {};
-      cy.get(".occupied").each((grid) => {
-        const coordinate = grid.attr("id");
-        const classes = grid.attr("class");
-        const type = SHIPS_CONFIG.find((ship) => classes.includes(ship.id)).id;
-        occupiedGrids.push(coordinate);
-        placedShips[type] = [...(placedShips[type] ?? []), coordinate];
-      });
-      cy.wrap({ grids: occupiedGrids, ships: placedShips }).as(aliasName);
-    };
-    capturePlayerState(playerone.name);
+    cy.capturePlayerState(playerone.name);
 
     cy.findByRole("button", { name: "Continue" }).should("be.visible").click();
 
