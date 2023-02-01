@@ -117,8 +117,8 @@ describe("game e2e", () => {
     };
 
     // rotate, randomize & test ships placement
-    // cy.findByRole("button", { name: "Randomize" }).should("be.visible").click();
-    // cy.get("@board").then(() => testShips());
+    cy.findByRole("button", { name: "Randomize" }).should("be.visible").click();
+    cy.get("@board").then(() => testShips());
 
     // wrap occupied grids for later use
     const capturePlayerState = (aliasName) => {
