@@ -1,7 +1,8 @@
 import { playerone, playertwo } from "../support/constants";
+import { SHIPS_CONFIG } from "../../src/state/state";
 
 describe("pvp mode", () => {
-  it.only("both manual; renders and game completes", () => {
+  it("both manual; renders and game completes", () => {
     cy.visit("index.html");
 
     cy.findByRole("button", { name: "2 Players" }).should("be.visible").click();
@@ -78,6 +79,25 @@ describe("pvp mode", () => {
     playPveRound();
 
     // check final board display correct
+    cy.get("@playerOneBoard").within(() => {
+      cy.get(".sunk")
+        .should(
+          "have.length",
+          SHIPS_CONFIG.reduce((acc, ship) => acc + ship.shipLength, 0)
+        )
+        .each((sunkShip) => {
+          expect(sunkShip).to.be.empty;
+        });
+      cy.get(".hit, .miss").should("not.exist");
+      cy.get("i").should("not.exist");
+    });
+
+    cy.get("@playerTwoBoard").within(() => {
+      cy.get(".hit, .miss, .sunk").each((grid) => {
+        if (grid.is(".hit, .miss")) expect(grid).to.have.descendants("i");
+        if (grid.is(".sunk")) expect(grid).to.not.have.descendants("i");
+      });
+    });
 
     // win popup message
     cy.get(".win-popup")
