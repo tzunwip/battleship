@@ -43,10 +43,6 @@ export function removeElementInactive(element) {
   element.classList.remove("inactive");
 }
 
-export function toggleElementInactive(element) {
-  element.classList.toggle("inactive");
-}
-
 export function getRandomBinary() {
   return Math.round(Math.random());
 }
