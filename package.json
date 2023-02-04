@@ -19,6 +19,7 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@4tw/cypress-drag-drop": "^2.2.3",
     "@babel/core": "^7.20.12",
     "@babel/preset-env": "^7.20.2",
     "@cypress/code-coverage": "^3.10.0",
