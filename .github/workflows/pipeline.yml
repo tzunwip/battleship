@@ -1,0 +1,39 @@
+name: Deployment Pipeline
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches: [master]
+    types: [opened, synchonize]
+
+jobs:
+  pre_deployment:
+    runs-on: ubuntu-latest
+    steps: 
+      - uses: actions/checkout@v3
+        with: 
+          fetch-depth: 0
+
+      - name: Install Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Install dependencies
+        run: npm install
+          
+      - name: Lint w/ eslint & prettier
+        run: npm run lint
+
+      - name: Build
+        run: npm run build:test
+
+      - name: e2e tests
+        uses: cypress-io/github-action@v5
+        with:
+          command: npm run cypress
+          start: npm run start
+          wait-on: http://localhost:8080
+

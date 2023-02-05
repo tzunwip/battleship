@@ -5,11 +5,12 @@
   "private": true,
   "scripts": {
     "test": "jest",
+    "lint": "eslint . --ext .js",
     "dev:open": "cross-env NODE_ENV=test webpack serve --open",
     "dev": "cross-env NODE_ENV=test webpack serve",
     "start": "http-server ./dist",
     "build": "webpack --mode=production",
-    "build:test": "cross-env NODE_ENV=test webpack",
+    "build:test": "cross-env NODE_ENV=test webpack --mode=production",
     "cypress:open": "cypress open",
     "cypress": "cypress run --browser chrome",
     "coverage:text": "nyc report --reporter=text-summary",
