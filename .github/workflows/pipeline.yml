@@ -2,8 +2,8 @@ name: Deployment Pipeline
 
 on:
   push:
-    # branches:
-      # - master
+    branches:
+      - master
   pull_request:
     branches: [master]
     types: [opened, synchonize]
@@ -40,7 +40,7 @@ jobs:
           start: npm run start
           wait-on: http://localhost:8080
   deployment:
-    # if: github.event.name == 'push'
+    if: github.event.name == 'push'
     needs: [pre_deployment]
     permissions: 
       pages: write
