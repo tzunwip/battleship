@@ -7,7 +7,7 @@ on:
   pull_request:
     branches: 
       - master
-    types: [opened, reopened, synchonize]
+    types: [opened, reopened, synchonize, ready_for_review]
 
 jobs:
   pre_deployment:
