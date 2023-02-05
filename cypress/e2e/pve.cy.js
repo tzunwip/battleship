@@ -9,6 +9,7 @@ describe("pve mode", () => {
   });
 
   it("screens render correctly and game completes", () => {
+    cy.clock();
     cy.get("button").contains("1 Player").click();
 
     // test 1 player name input screen
@@ -138,6 +139,7 @@ describe("pve mode", () => {
       });
 
     // after computer first move
+    cy.tick(1000);
     cy.get("@playerBoard")
       .should("have.class", "inactive")
       .find(".miss, .hit, .sunk")
@@ -151,6 +153,7 @@ describe("pve mode", () => {
       .click();
 
     // after computer second move
+    cy.tick(1000);
     cy.get("@playerBoard")
       .should("have.class", "inactive")
       .find(".miss, .hit, .sunk")
@@ -180,6 +183,7 @@ describe("pve mode", () => {
         if (body.find(".win-popup").length > 0) return;
 
         // wait for computer move
+        cy.tick(1000);
         cy.get("#player0.inactive, .win-popup").then((element) => {
           // tries to find win popup
           if (element.hasClass("win-popup")) return;
