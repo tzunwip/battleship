@@ -5,8 +5,9 @@ on:
     branches:
       - master
   pull_request:
-    branches: [master]
-    types: [opened, synchonize]
+    branches: 
+      - master
+    types: [opened, reopened, synchonize]
 
 jobs:
   pre_deployment:
