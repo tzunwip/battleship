@@ -46,8 +46,7 @@ jobs:
       pages: write
       id-token: write
     environment:
-      name: gh-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+      name: github-pages
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
