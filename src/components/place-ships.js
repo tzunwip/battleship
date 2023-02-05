@@ -52,7 +52,9 @@ function getTargetGrids(headX, headY, length, orientation) {
 
 function checkOccupied(nodes, shipId) {
   const isOccupied = nodes.some((node) => {
-    return node.classList.contains("occupied") && !node.classList.contains(shipId);
+    return (
+      node?.classList.contains("occupied") && !node.classList.contains(shipId)
+    );
   });
 
   return isOccupied;
@@ -69,7 +71,15 @@ function checkInbounds(headX, headY, length, orientation, gridSize) {
   }
 }
 
-function checkValidShipPlacement(shipId, headX, headY, length, orientation, gridSize, nodes) {
+function checkValidShipPlacement(
+  shipId,
+  headX,
+  headY,
+  length,
+  orientation,
+  gridSize,
+  nodes
+) {
   const isInbounds = checkInbounds(headX, headY, length, orientation, gridSize);
 
   // If ship placement outside board, isOccupied() returns error
@@ -97,7 +107,10 @@ function renderShip(parent, { id, shipLength, orientation = "y" }) {
 
   // set ship styles
   const orientationClass = orientation == "y" ? "grid-column" : "grid-row";
-  shipContainer.setAttribute("class", `place-ships__ship-container ${orientationClass}`);
+  shipContainer.setAttribute(
+    "class",
+    `place-ships__ship-container ${orientationClass}`
+  );
   shipContainer.setAttribute("draggable", "true");
   shipContainer.setAttribute("id", id);
   shipContainer.setAttribute("data-orientation", orientation);
@@ -120,13 +133,13 @@ function renderShip(parent, { id, shipLength, orientation = "y" }) {
     }, 0);
   });
 
-  shipContainer.addEventListener("dragend", (e) => {
+  shipContainer.addEventListener("dragend", () => {
     setTimeout(() => {
       shipContainer.classList.remove("hidden");
     }, 0);
   });
 
-  shipContainer.addEventListener("dblclick", (e) => {
+  shipContainer.addEventListener("dblclick", () => {
     rotateShip(shipContainer);
   });
 
@@ -137,7 +150,7 @@ function renderShip(parent, { id, shipLength, orientation = "y" }) {
     shipGrid.addEventListener("mousedown", (e) => {
       const parent = e.target.parentElement;
 
-      parent.setAttribute("data-dragOffset", i);
+      parent.setAttribute("data-dragoffset", i);
     });
     shipContainer.appendChild(shipGrid);
   }
@@ -152,7 +165,14 @@ function rotateShip(shipEle) {
   const shipLength = shipDataset.length;
   const oldOrientation = shipDataset.orientation;
   const newOrientation = oldOrientation == "x" ? "y" : "x";
-  const newNodes = findNewRotateNodes(headX, headY, shipId, newOrientation, shipLength, GRID_SIZE);
+  const newNodes = findNewRotateNodes(
+    headX,
+    headY,
+    shipId,
+    newOrientation,
+    shipLength,
+    GRID_SIZE
+  );
 
   if (newNodes) {
     toggleRotateShipStyles(shipEle, newNodes.targetNodes);
@@ -160,20 +180,38 @@ function rotateShip(shipEle) {
   }
 }
 
-function findNewRotateNodes(headX, headY, shipId, newOrientation, shipLength, gridSize) {
+function findNewRotateNodes(
+  headX,
+  headY,
+  shipId,
+  newOrientation,
+  shipLength,
+  gridSize
+) {
   for (let i = 0; i < shipLength; i++) {
     for (let j = 0; j < shipLength; j++) {
-      const newX = newOrientation == "x" ? Number(headX) - i : Number(headX) + j;
-      const newY = newOrientation == "y" ? Number(headY) - i : Number(headY) + j;
+      const newX =
+        newOrientation == "x" ? Number(headX) - i : Number(headX) + j;
+      const newY =
+        newOrientation == "y" ? Number(headY) - i : Number(headY) + j;
 
-      const isInbounds = checkInbounds(newX, newY, shipLength, newOrientation, gridSize);
-      console.log(`x${newX}y${newY} isInbound: ${isInbounds}`);
+      const isInbounds = checkInbounds(
+        newX,
+        newY,
+        shipLength,
+        newOrientation,
+        gridSize
+      );
 
       if (isInbounds) {
-        const targetNodes = getTargetGrids(newX, newY, shipLength, newOrientation);
+        const targetNodes = getTargetGrids(
+          newX,
+          newY,
+          shipLength,
+          newOrientation
+        );
         const isOccupied = checkOccupied(targetNodes, shipId);
         if (!isOccupied) {
-          console.log(targetNodes, `isOccupied: ${isOccupied}`);
           return { newX, newY, targetNodes };
         }
       }
@@ -207,9 +245,16 @@ function renderPlaceShipGrids(board) {
       grid.addEventListener("drop", (e) => {
         const data = JSON.parse(e.dataTransfer.getData("text/plain"));
         const gridData = e.target.dataset;
-        const headX = data.orientation == "x" ? gridData.x - data.dragoffset : gridData.x;
-        const headY = data.orientation == "y" ? gridData.y - data.dragoffset : gridData.y;
-        const targetGrids = getTargetGrids(headX, headY, data.length, data.orientation);
+        const headX =
+          data.orientation == "x" ? gridData.x - data.dragoffset : gridData.x;
+        const headY =
+          data.orientation == "y" ? gridData.y - data.dragoffset : gridData.y;
+        const targetGrids = getTargetGrids(
+          headX,
+          headY,
+          data.length,
+          data.orientation
+        );
 
         const isValidPlacement = checkValidShipPlacement(
           data.id,
@@ -218,7 +263,7 @@ function renderPlaceShipGrids(board) {
           data.length,
           data.orientation,
           GRID_SIZE,
-          targetGrids,
+          targetGrids
         );
 
         if (!isValidPlacement) throw new Error("invalid ship placement");
@@ -249,7 +294,8 @@ function renderSubmitButton(parent) {
   const submitButton = document.createElement("button");
   submitButton.textContent = "Continue";
   submitButton.type = "button";
-  submitButton.className = "place-ships__button place-ships__button--submit nes-btn is-success";
+  submitButton.className =
+    "place-ships__button place-ships__button--submit nes-btn is-success";
   parent.appendChild(submitButton);
   submitButton.addEventListener("click", () => {
     const ships = getPlacedShips(SHIPS_CONFIG);
@@ -303,7 +349,12 @@ function renderRandomizedBoard(randomizedShips) {
     const headX = headCoordinate.charAt(1);
     const headY = headCoordinate.charAt(3);
     const headGrid = document.querySelector(`#${headCoordinate}`);
-    const targetGrids = getTargetGrids(headX, headY, ship.shipLength, ship.orientation);
+    const targetGrids = getTargetGrids(
+      headX,
+      headY,
+      ship.shipLength,
+      ship.orientation
+    );
 
     renderShip(headGrid, ship);
     updateShipGrids(ship.id, targetGrids);
@@ -327,15 +378,22 @@ function randomizeShips(shipsConfig, boardSize) {
 
 function randomPlaceShip({ id, shipLength }, occupiedCoordinates, boardSize) {
   const randomOrientation = getRandomBinary() ? "x" : "y";
-  const maxX = randomOrientation == "x" ? boardSize - shipLength - 1 : boardSize - 1;
-  const maxY = randomOrientation == "y" ? boardSize - shipLength - 1 : boardSize - 1;
+  const maxX =
+    randomOrientation == "x" ? boardSize - shipLength - 1 : boardSize - 1;
+  const maxY =
+    randomOrientation == "y" ? boardSize - shipLength - 1 : boardSize - 1;
   let coordinates = [];
 
   while (coordinates.length === 0) {
     const randomX = getRandomNumber(maxX);
     const randomY = getRandomNumber(maxY);
 
-    const targetCoordinates = getTargetCoordinates(randomX, randomY, shipLength, randomOrientation);
+    const targetCoordinates = getTargetCoordinates(
+      randomX,
+      randomY,
+      shipLength,
+      randomOrientation
+    );
 
     const isInvalid = targetCoordinates.some((targetCoord) => {
       return occupiedCoordinates.some((occupiedCoord) => {

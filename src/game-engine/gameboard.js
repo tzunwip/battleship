@@ -38,7 +38,9 @@ export default class Gameboard {
 
     // adds newShip reference to
     newShipInputs.coordinates.forEach((position) => {
-      this.boardDatabase[position] = { ship: this.shipsDatabase[newShipInputs.id] };
+      this.boardDatabase[position] = {
+        ship: this.shipsDatabase[newShipInputs.id],
+      };
     });
   }
 
@@ -64,7 +66,9 @@ export default class Gameboard {
     }
     // grid attacked already, with ship or no ship
     if (grid.isAttacked == true) {
-      return console.error("error receiveAttack(), grid has been attacked already");
+      return console.error(
+        "error receiveAttack(), grid has been attacked already"
+      );
     }
   }
 

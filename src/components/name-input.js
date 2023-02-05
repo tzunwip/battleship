@@ -1,4 +1,4 @@
-import { getEmptyMainElement } from "./utility";
+import { getEmptyMainElement, renderPassDeviceSplash } from "./utility";
 import { GAME } from "../state/state";
 import { renderPlaceShips } from "./place-ships";
 
@@ -9,10 +9,6 @@ export function renderNameInput() {
   const inputOnePlaceholder = isPvp ? "Player One" : "Player";
   const inputTwoPlaceholder = "Player Two";
   const buttonText = "Continue";
-  const computerInput = {
-    name: "Computer",
-    isComputer: true,
-  };
 
   const form = document.createElement("form");
   form.className = "name-input nes-container";
@@ -52,7 +48,9 @@ export function renderNameInput() {
       GAME.createPlayer(newPlayerInput);
     });
 
-    renderPlaceShips();
+    isPvp
+      ? renderPassDeviceSplash(inputElements[`name0`].value, renderPlaceShips)
+      : renderPlaceShips();
   });
 }
 

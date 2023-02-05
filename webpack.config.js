@@ -1,17 +1,21 @@
 const path = require("path");
+const TerserPlugin = require("terser-webpack-plugin");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
-const FaviconsWebpackPlugin = require("favicons-webpack-plugin");
+const ImageMinimizerPlugin = require("image-minimizer-webpack-plugin");
 
 module.exports = {
-  mode: "production",
+  mode: "development",
   entry: "./src/index.js",
   output: {
-    filename: "js/main.bundle.js",
+    filename: "js/[name].[contenthash].js",
     path: path.resolve(__dirname, "dist"),
     assetModuleFilename: "assets/[name][ext]",
     clean: true,
+  },
+  devServer: {
+    static: "./dist",
   },
   module: {
     rules: [
@@ -19,10 +23,44 @@ module.exports = {
         test: /.s?css$/,
         use: [MiniCssExtractPlugin.loader, "css-loader"],
       },
+      {
+        test: /\.(png|svg|jpg|jpeg|gif)$/i,
+        type: "asset/resource",
+      },
+      {
+        test: /\.js/,
+        exclude: /node_modules/,
+        use: [
+          {
+            loader: "babel-loader",
+          },
+        ],
+      },
     ],
   },
   optimization: {
-    minimizer: [new CssMinimizerPlugin()],
+    minimize: true,
+    minimizer: [
+      new TerserPlugin(),
+      new CssMinimizerPlugin(),
+      new ImageMinimizerPlugin({
+        minimizer: {
+          implementation: ImageMinimizerPlugin.imageminMinify,
+          options: {
+            // Lossless optimization with custom option
+            // Feel free to experiment with options for better result for you
+            plugins: [["optipng", { optimizationLevel: 5 }]],
+          },
+        },
+      }),
+    ],
+    moduleIds: "deterministic",
+    runtimeChunk: "single",
+    splitChunks: {
+      chunks: "all",
+      minSize: 0,
+      minSizeReduction: 0,
+    },
   },
   plugins: [
     new HtmlWebpackPlugin({
@@ -31,6 +69,5 @@ module.exports = {
     new MiniCssExtractPlugin({
       filename: "./css/[name].css",
     }),
-    new FaviconsWebpackPlugin("./src/img/icons8-sailboat-48.png"),
   ],
 };
