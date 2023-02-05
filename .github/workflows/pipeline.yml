@@ -41,7 +41,7 @@ jobs:
           start: npm run start
           wait-on: http://localhost:8080
   deployment:
-    if: github.event.name == 'push'
+    if: github.event_name == 'push' || github.event.pull_request.merged
     needs: [pre_deployment]
     permissions: 
       pages: write
