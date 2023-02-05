@@ -150,7 +150,7 @@ function renderShip(parent, { id, shipLength, orientation = "y" }) {
     shipGrid.addEventListener("mousedown", (e) => {
       const parent = e.target.parentElement;
 
-      parent.setAttribute("data-dragOffset", i);
+      parent.setAttribute("data-dragoffset", i);
     });
     shipContainer.appendChild(shipGrid);
   }
